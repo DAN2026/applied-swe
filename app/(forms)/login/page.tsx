@@ -1,6 +1,7 @@
 import Form from "@/components/general/Form";
 import { LucideKey, LucideMail, LucidePersonStanding, LucidePin } from "lucide-react";
 import Image from "next/image";
+import { handleLogin } from "./actions";
 
 
 
@@ -23,46 +24,40 @@ export default function Register(){
             min: 10
         },
     ]
-    const mobileDisplay = (
-      <div className="grid grid-rows-[30%_70%] md:hidden h-screen w-full bg-gray-100 ">
-        <div className="relative h-full w-full">
-          <Image
-            src="/images/nature.jpg"
-            fill
-            alt="image of donated clothes"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 flex flex-col justify-center text-center items-center ">
-            <div className="w-fit h-[80%]">
-              <Image
-                src="/images/sustainwear-transparent-white.png"
-                alt="SustainWear Logo"
-                width={100}
-                height={100}
-                className="h-full w-auto"
-              />
-            </div>
-            
-          </div>
-        </div>
-
-        <div className="flex flex-col w-full text-center justfify-center py-[10%] mx-auto bg-emerald-600 bg-linear-to-t from-emerald-600 to-green-700">
-            <div>
-              <h1 className="text-5xl tracking-wider uppercase mb-3 text-white font-bold">
-                Login
-              </h1>
-              <p className="text-2xl tracking-tight text-white font-semibold">
-                Welcome back!
-                <br />
-                Login to continue donating.
-              </p>
-            </div>
-            <div className="p-6 py-10">
-            <Form fields={fields} />
-          </div>
-        </div>
+const mobileDisplay = (
+  <div className="md:hidden h-screen w-full bg-linear-to-b from-green-700 to-emerald-600 flex flex-col">
+    
+    <div className="relative flex-1 w-full">
+      <Image
+        src="/images/nature.jpg"
+        fill
+        alt="Image of donated clothes"
+        className="object-cover"
+        priority
+      />
+      <div className="absolute inset-0 bg-black/40 flex flex-col justify-center items-center">
+        <Image
+          src="/images/sustainwear-transparent-white.png"
+          alt="SustainWear Logo"
+          width={120}
+          height={120}
+          className="w-auto h-24 mb-3"
+        />
+        <h1 className="text-4xl font-extrabold tracking-wide text-white uppercase drop-shadow-md">
+          Login
+        </h1>
+        <p className="mt-2 text-white/90 text-base font-medium text-center px-4">
+          Welcome back  — continue donating today.
+        </p>
       </div>
-    );
+    </div>
+
+    <div className="flex flex-col flex-1 justify-center rounded-t-3xl px-6 py-8 shadow-lg">
+      <Form fields={fields} action={handleLogin} />
+    </div>
+  </div>
+);
+
 
     const desktopDisplay = (
       <div className="hidden md:flex h-screen w-full">
@@ -96,7 +91,7 @@ export default function Register(){
             Login
           </h2>
           <div className="p-6">
-            <Form fields={fields} />
+            <Form fields={fields} action={handleLogin} />
           </div>
         </div>
       </div>
