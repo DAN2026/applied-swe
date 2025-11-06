@@ -42,7 +42,7 @@ export default function Form({fields}: FormProps) {
         <div className="flex justify-center mt-4 w-full">
         <Button
           type="submit"
-          className="w-3/4 bg-emerald-800 rounded-lg shadow-xl text-md hover:bg-emerald-700 hover:text-lg transition-all ease-in-out duration-300"
+          className="w-3/4 active:bg-emerald-600 active:text-lg  bg-emerald-800 rounded-lg shadow-xl text-md hover:bg-emerald-700 hover:text-lg transition-all ease-in-out duration-300"
         >
           Submit
         </Button>
