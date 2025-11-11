@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  User_ID  Int     @id @default(autoincrement())
+  Username String  @unique
+  Email    String  @unique
+  Phone    String? @unique
+  Password String
+  Address  String
+  Postcode String
+  Role     Role[]
+  Staff    Staff[]
+  Admin    Admin[]
+  Items    Items[]
+}
+
+model Staff {
+  Staff_ID   Int     @id @default(autoincrement())
+  Donor      User    @relation(fields: [User_ID], references: [User_ID])
+  User_ID    Int
+  Charity    Charity @relation(fields: [Charity_ID], references: [Charity_ID])
+  Charity_ID Int
+}
+
+model Admin {
+  Admin_ID Int  @id @default(autoincrement())
+  User     User @relation(fields: [User_ID], references: [User_ID])
+  User_ID  Int
+}
+
+model Items {
+  Item_No     Int         @id @default(autoincrement())
+  Item_Name   String
+  Brand       String
+  Size        Size[]
+  Colour      String
+  Condition   Condition[]
+  Image       String
+  Time        Times[]
+  Pickup_Date DateTime
+  Distributed Boolean     @default(false)
+  Donor       User        @relation(fields: [Donor_ID], references: [User_ID])
+  Donor_ID    Int
+  Charity     Charity     @relation(fields: [Charity_ID], references: [Charity_ID])
+  Charity_ID  Int
+  Date_Added  DateTime    @default(now())
+}
+
+model Charity {
+  Charity_ID   Int     @id @default(autoincrement())
+  Charity_Name String  @unique
+  About        String
+  Logo         String
+  Staff        Staff[]
+  Items        Items[]
+}
+
+model Fumes {
+  Entry_No    Int      @id @default(autoincrement())
+  CO2_Saved   Int
+  Date_Logged DateTime @default(now())
+}
+
+enum Times {
+  Morning
+  Afternoon
+  Evening
+}
+
+enum Size {
+  XS
+  S
+  M
+  L
+  XL
+  XXL
+  XXXL
+}
+
+enum Condition {
+  New
+  LikeNew
+  Worn
+  HeavilyWorn
+}
+
+enum Role {
+  USER
+  STAFF
+  ADMIN
+}
+

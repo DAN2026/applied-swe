@@ -76,6 +76,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --weight: 1px;
 }
 
 .dark {
@@ -119,4 +120,15 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.text-outline-4 {
+  --weight: 4px;
+}
+.text-outline-2 {
+  --weight: 2px;
+}
+
+.text-outline {
+  -webkit-text-stroke: var(--weight) #ffffff;
 }
