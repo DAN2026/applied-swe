@@ -1,7 +1,9 @@
 "use server"
 
+import { CreateUser } from "@/lib/actions";
 import prisma from "@/lib/prisma";
 import { registerSchema } from "@/schemas/register";
+import { Role } from "@prisma/client";
 import { z } from "zod";
 
 export async function handleRegister(formData: FormData) {
@@ -14,22 +16,22 @@ export async function handleRegister(formData: FormData) {
         return { success: false, errors:formattedErrors.properties }; //.properties contains <field:string, errors:string[]>
 
     }
-    console.log(data); 
 
         try
         {
-            await prisma.user.create({
-                data: {
-                    Username: data.username.toString(),
-                    Email: data.email.toString(),
-                    Phone: data.mobile.toString(),
-                    Address: data.address.toString(),
-                    Postcode: data.postcode.toString(),
-                    Password: data.password.toString(),
-                    
-                }
-            })
-            return { success: true };
+            const create = await CreateUser({
+                            username: data.username.toString(),
+                            email: data.email.toString(),
+                            phone: data.phone.toString().trim().length === 0 ? undefined : data.phone.toString(),
+                            password: data.password.toString(),
+                            address: data.address.toString(),
+                            postcode: data.postcode.toString(),
+                            role: Role.USER
+                        })
+                        if (create){
+                            return { success: true };
+                        }
+                        else return {success: false, error: {general:{errors: ["Could not create user"]}}}
         } 
         catch (e:any)
         {
@@ -48,7 +50,6 @@ export async function handleRegister(formData: FormData) {
                     }
                 };
             }
-            console.log(e);
-            return { success: false, errors: { general: { errors: ["An unknown error occurred. Please try again."] } } };
+            return { success: false, errors: { general: { errors: ["An unknown error occurred. Please try again.",e] } } };
         }
 }

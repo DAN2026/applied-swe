@@ -4,13 +4,12 @@ import prisma from "@/lib/prisma";
 
 export async function handleLogin(formData: FormData) {
     const data = Object.fromEntries(formData.entries()); // turns form data into an object
-
         try
         {
             const users = await prisma.user.findMany({
                 where: {
-                    Username: data.username.toString(),
-                    Password: data.password.toString(),
+                    username: data.username.toString(),
+                    password: data.password.toString(),
                 }
             })
             if (users.length === 0) {

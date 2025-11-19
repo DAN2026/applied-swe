@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { Router, useRouter } from "next/router";
 import { Spinner } from "../ui/spinner";
+import { useRouter } from "next/navigation";
+import { signIn, SignInResponse, useSession } from "next-auth/react";
 
 type FormProps = {
   fields: Field[];
@@ -14,7 +15,12 @@ type FormProps = {
     success: boolean;
     errors?: Record<string, { errors: string[] }>;
   }>;
+  successMsg: string
+  successFunc?: (email?:string, password?:string) => void;
+  redirect?: string
 };
+
+
 
 type Field = {
     name: string
@@ -26,23 +32,40 @@ type Field = {
     min?: number
 }
 
-export default function Form({fields,action}: FormProps) {
+export default function Form({fields,action,successMsg,redirect, successFunc}: FormProps) {
 
+  const router = useRouter();
   const [errors, setErrors] = useState<Record<string, { errors: string[]}> | null>(null);
+  const [pending, setPending] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
 
   const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setPending(true);
     const formData = new FormData(e.currentTarget);
     const result = await action(formData);
-    console.log(result);
     if (!result.success){
         setErrors(result.errors || null);
-        console.log(result.errors);
+        setPending(false);
     }
     else {
       setErrors(null);
-        setSuccess(true);
+      setSuccess(true);
+      setPending(false);
+      if (successFunc)
+      {
+        const email = formData.get("email")?.toString();
+        const password = formData.get("password")?.toString();
+
+        if (email && password)
+        {
+          successFunc(email, password);
+        }
+      }
+
+      if (redirect){
+      router.push(`/${redirect}`)
+      }
     }
   }
 
@@ -74,13 +97,13 @@ export default function Form({fields,action}: FormProps) {
         {errors?.["general"]?.errors.map((errorMessage, errorIndex) => (
           <p className="text-red-600 tracking-tighter text-sm w-full" key={errorIndex}>{errorMessage}</p>
         ))}
-        {success && <p className="text-sm text-green-500 font-semibold">Success</p>}
+        {success && <p className="text-sm text-green-500 font-semibold">{successMsg}</p>}
         <div className="flex justify-center mt-4 w-full">
         <Button
           type="submit"
           className="w-3/4 active:bg-emerald-600 active:text-lg  bg-emerald-800 rounded-lg shadow-xl text-md hover:bg-emerald-700 hover:text-lg transition-all ease-in-out duration-300"
         >
-          {success && <Spinner/>}
+          {pending && <Spinner/>}
           Submit
         </Button>
         </div>

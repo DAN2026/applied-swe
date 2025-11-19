@@ -1,12 +1,12 @@
+"use client"
+
 import Form from "@/components/general/Form";
 import { LucideHouse, LucideKey, LucideMail, LucidePersonStanding, LucidePhone, LucidePin } from "lucide-react";
 import Image from "next/image";
 import { handleRegister } from "./actions";
+import Link from "next/link";
+import { signIn } from "next-auth/react";
 
-export const metadata = {
-    title: "Register | SustainWear",
-
-}
 
 export default function Register(){
     const fields = [
@@ -32,7 +32,7 @@ export default function Register(){
             type: "text",
             className: "w-full",
             icon: <LucidePhone/>,
-            max: 15
+            max: 15,
         },
         {
             name: "postcode",
@@ -54,54 +54,68 @@ export default function Register(){
             className: "w-full",
             icon: <LucideKey/>,
             min: 10
-        },
+        }
     ]
 
 const mobileDisplay = (
-  <div className="md:hidden h-screen w-full bg-linear-to-b from-green-700 to-emerald-600 flex flex-col">
-    
-    {/* Hero Section */}
-    <div className="relative flex-1 w-full">
-      <Image
-        src="/images/nature.jpg"
-        fill
-        alt="Image of donated clothes"
-        className="object-cover"
-        priority
-      />
-      <div className="absolute inset-0 bg-black/40 flex flex-col justify-center items-center">
-        <Image
-          src="/images/sustainwear-transparent-white.png"
-          alt="SustainWear Logo"
-          width={120}
-          height={120}
-          className="w-auto h-24 mb-3"
-        />
-        <h1 className="text-4xl font-extrabold tracking-wide text-white uppercase drop-shadow-md">
-          Register
-        </h1>
-        <p className="mt-2 text-white/90 text-base font-medium text-center px-4">
-          Welcome to SustainWear — begin donating today.
-        </p>
-      </div>
-    </div>
+ <div className="md:hidden min-h-screen w-full relative flex flex-col">
+  <div className="absolute inset-0 -z-10 h-full w-full">
+    <Image
+      src="/images/nature.jpg"  
+      fill
+      alt="Image of donated clothes"
+      className="object-cover"
+      priority
+    />
+    <div className="absolute inset-0 bg-black/40" />
+  </div>
 
-    {/* Form Section */}
-    <div className="flex flex-col flex-1 justify-center px-6 py-8 shadow-lg">
-      <Form fields={fields} action={handleRegister} />
+  <div className="flex flex-col items-center pt-10 px-4">
+    <Image
+      src="/images/sustainwear-transparent-white.png"
+      alt="SustainWear Logo"
+      width={120}
+      height={120}
+      className="w-auto"
+    />
+    <h1 className="text-4xl font-extrabold tracking-wide text-white uppercase drop-shadow-md mt-4">
+      Register
+    </h1>
+    <p className="mt-2 text-white/90 text-base font-medium text-center">
+      Welcome to SustainWear — donate today.
+    </p>
+  </div>
+
+  <div className="flex flex-col flex-1 justify-center px-6 pt-6 pb-10">
+    <Form fields={fields} action={handleRegister} successMsg="Successfully registered" redirect="dashboard"/>
+    <div className="w-full flex justify-between text-center mt-2">
+      <Link
+        href="#"
+        className="text-base underline text-white active:text-lime-200 transition-all duration-200 ease-in-out"
+      >
+        Don't have an account?
+      </Link>
+      <Link
+        href="#"
+        className="text-base underline text-white active:text-lime-200 transition-all duration-200 ease-in-out"
+      >
+        Forgot password?
+      </Link>
     </div>
   </div>
+</div>
+
 );
 
 
     const desktopDisplay = (
-      <div className="hidden md:flex h-screen w-full">
-        <div className="relative w-1/2 h-screen">
+      <div className="hidden md:flex min-h-screen w-full">
+        <div className="relative w-1/2">
           <Image
             src="/images/clothes.jpg"
             fill
             alt="image of donated clothes"
-            className="object-cover"
+            className="object-cover min-h-screen"
           />
           <div className="absolute inset-0 bg-black/50">
             <div className="flex flex-col h-full justify-center items-center">
@@ -126,7 +140,10 @@ const mobileDisplay = (
             Register
           </h2>
           <div className="p-6">
-            <Form fields={fields} action={handleRegister}/>
+            <Form fields={fields} action={handleRegister} successMsg="Successfully registered" successFunc={(email:string, password:string)=>{signIn("credentials",{email,password,redirect:true})}} redirect="dashboard" />
+            <div className="w-full flex justify-center text-center mt-2">
+            <Link href="/login" className="text-base underline text-white hover:text-lime-200 transition-all duration-200 ease-in-out">Already have an account?</Link>
+            </div>
           </div>
         </div>
       </div>

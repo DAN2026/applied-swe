@@ -1,11 +1,18 @@
+"use client"
+
 import Form from "@/components/general/Form";
 import { LucideKey, LucideMail, LucidePersonStanding, LucidePin } from "lucide-react";
 import Image from "next/image";
 import { handleLogin } from "./actions";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { signIn } from "next-auth/react";
 
 
 
 export default function Register(){
+
+  
     const fields = [
         {
             name: "username",
@@ -25,48 +32,63 @@ export default function Register(){
         },
     ]
 const mobileDisplay = (
-  <div className="md:hidden h-screen w-full bg-linear-to-b from-green-700 to-emerald-600 flex flex-col">
-    
-    <div className="relative flex-1 w-full">
-      <Image
-        src="/images/nature.jpg"
-        fill
-        alt="Image of donated clothes"
-        className="object-cover"
-        priority
-      />
-      <div className="absolute inset-0 bg-black/40 flex flex-col justify-center items-center">
-        <Image
-          src="/images/sustainwear-transparent-white.png"
-          alt="SustainWear Logo"
-          width={120}
-          height={120}
-          className="w-auto h-24 mb-3"
-        />
-        <h1 className="text-4xl font-extrabold tracking-wide text-white uppercase drop-shadow-md">
-          Login
-        </h1>
-        <p className="mt-2 text-white/90 text-base font-medium text-center px-4">
-          Welcome back  — continue donating today.
-        </p>
-      </div>
-    </div>
+   <div className="md:hidden min-h-screen w-full relative flex flex-col">
+  <div className="absolute inset-0 -z-10 h-full w-full">
+    <Image
+      src="/images/nature.jpg"  
+      fill
+      alt="Image of donated clothes"
+      className="object-cover"
+      priority
+    />
+    <div className="absolute inset-0 bg-black/40" />
+  </div>
 
-    <div className="flex flex-col flex-1 justify-center rounded-t-3xl px-6 py-8 shadow-lg">
-      <Form fields={fields} action={handleLogin} />
+  <div className="flex flex-col items-center pt-10 px-4">
+    <Image
+      src="/images/sustainwear-transparent-white.png"
+      alt="SustainWear Logo"
+      width={120}
+      height={120}
+      className="w-auto"
+    />
+    <h1 className="text-4xl font-extrabold tracking-wide text-white uppercase drop-shadow-md mt-4">
+      Login
+    </h1>
+    <p className="mt-2 text-white/90 text-base font-medium text-center">
+      Welcome back — login to continue donating.
+    </p>
+  </div>
+
+  <div className="flex flex-col flex-1 justify-center px-6 pt-6 pb-10">
+    <Form fields={fields} action={handleLogin} successMsg="Successfully logged in" redirect="dashboard" />
+    <div className="w-full flex justify-between text-center mt-2">
+      <Link
+        href="#"
+        className="text-base underline text-white active:text-lime-200 transition-all duration-200 ease-in-out"
+      >
+        Don't have an account?
+      </Link>
+      <Link
+        href="#"
+        className="text-base underline text-white active:text-lime-200 transition-all duration-200 ease-in-out"
+      >
+        Forgot password?
+      </Link>
     </div>
   </div>
+</div>
 );
 
 
     const desktopDisplay = (
-      <div className="hidden md:flex h-screen w-full">
-        <div className="relative w-1/2 h-screen">
+      <div className="hidden md:flex min-h-screen w-full">
+        <div className="relative w-1/2">
           <Image
             src="/images/clothes.jpg"
             fill
             alt="image of donated clothes"
-            className="object-cover"
+            className="object-cover min-h-screen"
           />
           <div className="absolute inset-0 bg-black/50">
             <div className="flex flex-col h-full justify-center items-center">
@@ -91,7 +113,12 @@ const mobileDisplay = (
             Login
           </h2>
           <div className="p-6">
-            <Form fields={fields} action={handleLogin} />
+            <Form fields={fields} action={(handleLogin)} successMsg="Successfully logged in" redirect="dashboard"/>
+            <Button onClick={() => signIn("google",{callbackUrl:"/dashboard"})}>Google Login</Button>
+            <div className="w-full flex justify-between text-center mt-2">
+            <Link href="/register" className="text-base underline text-white hover:text-lime-200 transition-all duration-200 ease-in-out">Don't have an account?</Link>
+            <Link href="#" className="text-base underline text-white hover:text-lime-200 transition-all duration-200 ease-in-out">Forgot password?</Link>
+            </div>
           </div>
         </div>
       </div>
