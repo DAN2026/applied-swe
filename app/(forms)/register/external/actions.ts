@@ -2,7 +2,9 @@
 
 import { CreateUser } from "@/lib/actions";
 import { externalSchema } from "@/schemas/externalRegister";
+import { UserType } from "@/types/user";
 import { Role } from "@prisma/client";
+import { error } from "console";
 import { getServerSession } from "next-auth";
 import { success, z } from "zod";
 
@@ -19,39 +21,20 @@ export async function handleExternal(formData: FormData) {
         const formattedErrors = z.treeifyError(result.error)
         return { success: false, errors:formattedErrors.properties }
     }
-        try
-        {
-            const create = await CreateUser({
-                username: user.name!,
-                email: user.email!,
-                phone: data.phone.toString().trim().length === 0 ? undefined : data.phone.toString(),
-                password: data.password.toString(),
-                address: data.address.toString(),
-                postcode: data.postcode.toString(),
-                role: Role.USER
-            })
-            if (create){
-                return { success: true };
-            }
-            else return {success: false, error: {general:{errors: ["Could not create user"]}}}
-        } 
-        catch (e:any)
-        {
-            const fieldMap: Record<string,string> ={
-                Username: "username",
-                Email: "email",
-            }
-            if (e.code === "P2002"){
-                const field = e.meta?.target?.[0];
-                const fieldError = fieldMap[field ?? ""] ?? field?.toLowerCase() ?? "unknown"; 
-                
-                return {
-                    success: false, 
-                    errors:{ 
-                        [fieldError]: { errors: [`That ${fieldError} is already in use.`]}
-                    }
-                };
-            }
-            return { success: false, errors: { general: { errors: [`An unknown error occurred. Please try again. ${e}`] } } };
-        }
+    const t:UserType={
+        username: data.username.toString(),
+        email: user.email!,
+        phone: data.mobile.toString(),
+        password: data.password.toString(),
+        address: data.address.toString(),
+        postcode: data.postcode.toString(),
+        role: Role.USER
+    }
+    const create = await CreateUser(t)
+    if (create.success){
+        return { success: true };
+    }
+    else{
+        return {success:false, errors:create.errors}
+    }
 }

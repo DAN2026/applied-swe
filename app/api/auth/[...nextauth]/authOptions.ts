@@ -9,46 +9,24 @@ export const authOptions : NextAuthOptions = {
     clientId: process.env.GOOGLE_CLIENT_ID ?? '',
     clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? ''
   }),
-  Credentials({
-  name: "Credentials",
-  credentials: {},
-  async authorize(credentials?: Record<string, string>) {
-    if (!credentials?.email || !credentials?.password) return null;
-    const user = await prisma.user.findUnique({ where: { email: credentials.email } });
-    if (!user) return null;
-
-    const valid = await bcrypt.compare(credentials.password, user.password!);
-    if (!valid) return null;
-
-    return {
-      id: user.user_id,
-      name: user.username,
-      email: user.email,
-      role: user.role,
-      needsOnboarding: false
-    };
-  }
-})],
+  ],
   session: {
     maxAge: 60 * 60
   },
   callbacks: {
     async signIn({user, account}){
-      if (account?.provider === "credentials"){
-        return true;
-      }
       const existingUser = await prisma.user.findUnique({
-        where: {email: user.email!}
+        where: {Email: user.email!}
       })
       if (!existingUser){
         user.needsOnboarding = true
         return true
       }
       user.needsOnboarding = false;
-      user.id = existingUser.user_id;
-      user.name = existingUser.username;
-      user.email = existingUser.email;
-      user.role = existingUser.role;
+      user.id = existingUser.User_ID;
+      user.name = existingUser.Username;
+      user.email = existingUser.Email;
+      user.role = existingUser.Role;
       return true;
     },
 
@@ -72,13 +50,13 @@ export const authOptions : NextAuthOptions = {
       }
       if (trigger == "update"){
         const userCheck = await prisma.user.findUnique({
-          where: {email: token.email}
+          where: {Email: token.email}
         })
         if (userCheck){
-          token.id = userCheck.user_id
-          token.name = userCheck.username
-          token.email = userCheck.email
-          token.role = userCheck.role
+          token.id = userCheck.User_ID
+          token.name = userCheck.Username
+          token.email = userCheck.Email
+          token.role = userCheck.Role
           token.needsOnboarding = false;
         }
       }

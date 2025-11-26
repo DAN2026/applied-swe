@@ -20,7 +20,8 @@ export default function Register(){
             type: "text",
             className: "w-full",
             icon: <LucidePersonStanding/>,
-            max: 20
+            max: 20,
+            fieldType:"input"
         },
         {
             name: "password",
@@ -28,7 +29,8 @@ export default function Register(){
             type: "password",
             className: "w-full",
             icon: <LucideKey/>,
-            min: 10
+            min: 10,
+            fieldType:"input"
         },
     ]
 const mobileDisplay = (
@@ -62,6 +64,16 @@ const mobileDisplay = (
 
   <div className="flex flex-col flex-1 justify-center px-6 pt-6 pb-10">
     <Form fields={fields} action={handleLogin} successMsg="Successfully logged in" redirect="dashboard" />
+    <Button onClick={() => signIn("google", { callbackUrl: "/dashboard" })} className="flex items-center gap-2 p-5 m-4 rounded-md text-gray-700 bg-gray-100 hover:bg-gray-600 hover:text-white">
+              <Image
+                src="/images/google.png"
+                height={24}
+                width={24}
+                alt="Google logo"
+                className=""
+              />
+              <span>Google Login</span>
+            </Button>
     <div className="w-full flex justify-between text-center mt-2">
       <Link
         href="#"
@@ -112,9 +124,19 @@ const mobileDisplay = (
           <h2 className="text-5xl text-center text-white font-bold mb-5">
             Login
           </h2>
-          <div className="p-6">
+          <div className="p-6 flex flex-col justify-center">
             <Form fields={fields} action={(handleLogin)} successMsg="Successfully logged in" redirect="dashboard"/>
-            <Button onClick={() => signIn("google",{callbackUrl:"/dashboard"})}>Google Login</Button>
+            <Button onClick={() => signIn("google", { callbackUrl: "/dashboard" })} className="flex items-center gap-2 p-5 m-4 rounded-md text-gray-700 bg-gray-100 hover:bg-gray-600 hover:text-white">
+              <Image
+                src="/images/google.png"
+                height={24}
+                width={24}
+                alt="Google logo"
+                className=""
+              />
+              <span>Google Login</span>
+            </Button>
+
             <div className="w-full flex justify-between text-center mt-2">
             <Link href="/register" className="text-base underline text-white hover:text-lime-200 transition-all duration-200 ease-in-out">Don't have an account?</Link>
             <Link href="#" className="text-base underline text-white hover:text-lime-200 transition-all duration-200 ease-in-out">Forgot password?</Link>

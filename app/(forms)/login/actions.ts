@@ -8,8 +8,8 @@ export async function handleLogin(formData: FormData) {
         {
             const users = await prisma.user.findMany({
                 where: {
-                    username: data.username.toString(),
-                    password: data.password.toString(),
+                    Username: data.username.toString(),
+                    Password: data.password.toString(),
                 }
             })
             if (users.length === 0) {

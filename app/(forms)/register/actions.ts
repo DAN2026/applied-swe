@@ -1,9 +1,9 @@
 "use server"
 
 import { CreateUser } from "@/lib/actions";
+import { Role } from "@/lib/generated/prisma";
 import prisma from "@/lib/prisma";
 import { registerSchema } from "@/schemas/register";
-import { Role } from "@prisma/client";
 import { z } from "zod";
 
 export async function handleRegister(formData: FormData) {

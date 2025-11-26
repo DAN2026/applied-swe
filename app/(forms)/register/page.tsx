@@ -16,7 +16,8 @@ export default function Register(){
             type: "text",
             className: "w-full",
             icon: <LucidePersonStanding/>,
-            max: 20
+            max: 20,
+            fieldType:"input"
         },
         {
             name: "email",
@@ -24,7 +25,8 @@ export default function Register(){
             type: "text",
             className: "w-full",
             icon: <LucideMail/>,
-            max: 50
+            max: 50,
+            fieldType:"input"
         },
         {
             name:"mobile",
@@ -33,6 +35,7 @@ export default function Register(){
             className: "w-full",
             icon: <LucidePhone/>,
             max: 15,
+            fieldType:"input"
         },
         {
             name: "postcode",
@@ -40,12 +43,14 @@ export default function Register(){
             type: "text",
             className: "lg:w-1/2 md:w-full w-full",
             icon: <LucidePin/>,
+            fieldType:"input"
         },{
             name: "address",
             placeholder: "Address",
             type: "text",
             className: "lg:w-1/2 md:w-full w-full",
-            icon: <LucideHouse/>
+            icon: <LucideHouse/>,
+            fieldType:"input"
         },
         {
             name: "password",
@@ -53,7 +58,8 @@ export default function Register(){
             type: "password",
             className: "w-full",
             icon: <LucideKey/>,
-            min: 10
+            min: 10,
+            fieldType:"input"
         }
     ]
 
@@ -140,7 +146,7 @@ const mobileDisplay = (
             Register
           </h2>
           <div className="p-6">
-            <Form fields={fields} action={handleRegister} successMsg="Successfully registered" successFunc={(email:string, password:string)=>{signIn("credentials",{email,password,redirect:true})}} redirect="dashboard" />
+            <Form fields={fields} action={handleRegister} successMsg="Successfully registered" redirect="dashboard" />
             <div className="w-full flex justify-center text-center mt-2">
             <Link href="/login" className="text-base underline text-white hover:text-lime-200 transition-all duration-200 ease-in-out">Already have an account?</Link>
             </div>

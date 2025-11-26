@@ -15,7 +15,7 @@ model User {
   Password String
   Address  String
   Postcode String
-  Role     Role[]
+  Role     Role @default(USER)
   Staff    Staff[]
   Admin    Admin[]
   Items    Items[]
@@ -39,11 +39,11 @@ model Items {
   Item_No     Int         @id @default(autoincrement())
   Item_Name   String
   Brand       String
-  Size        Size[]
+  Size        Size
   Colour      String
-  Condition   Condition[]
+  Condition   Condition
   Image       String
-  Time        Times[]
+  Time        Times
   Pickup_Date DateTime
   Distributed Boolean     @default(false)
   Donor       User        @relation(fields: [Donor_ID], references: [User_ID])
@@ -96,4 +96,3 @@ enum Role {
   STAFF
   ADMIN
 }
-
