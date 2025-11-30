@@ -7,6 +7,9 @@ declare module "next-auth" {
         name?: string;
         email?: string;
         role?: Role | string;
+        staffId?: number;
+        adminId?: number;
+        charityId?: number;
         needsOnboarding?: boolean;
     }
 
@@ -16,6 +19,9 @@ declare module "next-auth" {
             name?: string;
             email?: string;
             role?: Role | string;
+            staffId?: number;
+            adminId?: number;
+            charityId?: number;
             needsOnboarding?: boolean;
         } & DefaultSession["user"]
     }
@@ -27,6 +33,9 @@ declare module "next-auth/jwt"{
         name?: string;
         email?: string;
         role?: Role | string;
+        staffId?: number;
+        adminId?: number;
+        charityId?: number;
         needsOnboarding?: boolean;
     }
 }

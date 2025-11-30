@@ -10,5 +10,6 @@ export type ItemType = {
     time:Times,
     pickup_date: Date,
     Donor_ID: number,
+    Donor_Name?: string,
     Charity_ID: number
 }

@@ -5,7 +5,6 @@ import {getServerSession} from 'next-auth'
 import prisma from "./prisma";
 import { UserType } from "@/types/user";
 import bcrypt from "bcryptjs";
-import Error from "next/error";
 import { ItemType } from "@/types/item";
 
 export async function CreateUser(user:UserType){
@@ -56,6 +55,19 @@ export async function GetUserDonations(){
   const items = await prisma.items.findMany({
     where: {Donor_ID: session.user.id},
   })
+  return items
+}catch(e){
+  return null
+}
+}
+
+export async function GetStaffDonations(){
+  const session = await getServerSession(authOptions)
+  if (!session?.user){
+    return null
+  }
+  try{
+  const items = await prisma.items.findMany()
   return items
 }catch(e){
   return null

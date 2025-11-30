@@ -4,13 +4,14 @@ import Link from "next/link"
 import { Button } from "../ui/button"
 import {signOut} from "next-auth/react"
 import { Session } from "next-auth"
+import { Role } from "@prisma/client"
 
-type NavbarProps = {
-    session: Session
-}
-export default function Navbar({session}:NavbarProps){
+
+export default function Navbar(){
     return(
-                <div className="bg-emerald-400 h-[100px] flex justify-between items-center shadow-lg text-white font-semibold text-lg px-[5%]">
+          <div className="bg-emerald-400 h-[100px] flex justify-between items-center shadow-lg text-white font-semibold text-lg px-[5%]">
+          <Link href="/" className="hover:underline">Test Link</Link>
+          <Link href="/" className="hover:underline">Test Link</Link>
           <Image
             src="/images/sustainwear-transparent-white.png"
             alt="SustainWear Logo"
@@ -18,7 +19,7 @@ export default function Navbar({session}:NavbarProps){
             height={120}
             className="w-fit"
           />
-          <Link href="/" className="hover:underline">Link 2</Link>
+          <Link href="/" className="hover:underline">Test Link</Link>
           <Button onClick={()=>{signOut()}} className="hover:underline">Logout</Button>
         </div>
     )

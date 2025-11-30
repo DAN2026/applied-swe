@@ -1,32 +1,15 @@
 "use client"
 
-import * as React from "react"
+import React from "react"
 import {
   ColumnDef,
-  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   SortingState,
   useReactTable,
-  VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -36,6 +19,9 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Items } from "@prisma/client"
+import { useState } from "react"
+import { Button } from "../ui/button"
+import { ArrowDown, ArrowUp, ArrowUpDown, Minus } from "lucide-react"
 
 type DataTableProps = {
   data: any[],
@@ -47,23 +33,50 @@ function DataTable({data,columns,type}:DataTableProps){
     data as Items[]
     columns as ColumnDef<Items>[]
   }
-  const table = useReactTable({data, columns, getCoreRowModel: getCoreRowModel()})
+  const [sorting,setSorting] = useState<SortingState>([])
+  const table = useReactTable({
+    data, 
+    columns, 
+    state: {sorting},
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel()
+  })
 
   return (
-    <Table className="bg-white rounded-lg">
+    <Table className="bg-white shadow-md rounded-lg overflow-hidden rounded-b-none">
       <TableHeader>
         {table.getHeaderGroups().map(headerGroup => (
           <TableRow key={headerGroup.id}>{headerGroup.headers.map(header => (
-            <TableHead className="p-3" key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</TableHead>
+            <TableHead
+  key={header.id}
+  className="p-3 bg-gray-100 text-gray-700 font-semibold uppercase tracking-wide"
+>
+  {header.isPlaceholder ? null : (
+    <Button
+      variant="ghost"
+      onClick={header.column.getToggleSortingHandler()}
+      className="flex items-center gap-2"
+    >
+      {flexRender(header.column.columnDef.header, header.getContext())}
+      {{
+        asc: <ArrowUp className="h-4 w-4 text-emerald-600" />,
+        desc: <ArrowDown className="h-4 w-4 text-emerald-600" />,
+        false: <ArrowUpDown className="h-4 w-4 opacity-30" />,
+      }[header.column.getIsSorted() as string] ?? null}
+    </Button>
+  )}
+</TableHead>
           ))}</TableRow>
         ))}
       </TableHeader>
       <TableBody>
-        {table.getRowModel().rows.map(row => (
-          <TableRow key={row.id}>{row.getVisibleCells().map(cell => (
-            <TableCell className="p-3" key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+        {table.getRowModel().rows.length > 0 ? 
+        (table.getRowModel().rows.map(row => (
+          <TableRow className="odd:bg-white even:bg-gray-50 hover:bg-gray-100 transition-all" key={row.id}>{row.getVisibleCells().map(cell => (
+            <TableCell className="p-3 text-sm text-gray-800" key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
           ))}</TableRow>
-        ))}
+        ))) : (<TableRow><TableCell colSpan={table.getAllColumns().length} className="bg-gray-50 text-gray-500 text-center p-6">No data available</TableCell></TableRow>)}
       </TableBody>
     </Table>
   )

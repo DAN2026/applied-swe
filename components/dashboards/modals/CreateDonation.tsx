@@ -8,7 +8,7 @@ type ModalProps = {
   onClose: () => void
 }
 
-export default function CreateUser({ onClose }: ModalProps) {
+export default function CreateDonation({ onClose }: ModalProps) {
   const [charities, setCharities] = useState<{ id: number; name: string }[] | null>(null)
 
   useEffect(() => {

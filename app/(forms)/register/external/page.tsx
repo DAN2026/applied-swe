@@ -3,7 +3,7 @@
 import Form from "@/components/general/Form"
 import { LucideHouse, LucideKey, LucidePhone, LucidePin, PersonStanding } from "lucide-react"
 import { handleExternal } from "./actions"
-import {useSession} from "next-auth/react"
+import {signIn, useSession} from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
@@ -61,5 +61,5 @@ const fields = [
         }
     },[data])
 
-    return(<div><Form fields={fields} action={handleExternal} successMsg="Created user" successFunc={()=>{update(); router.push("/dashboard")}}/></div>)
+    return(<div><Form fields={fields} action={handleExternal} successMsg="Created user" successFunc={()=>{signIn("google",{callbackUrl: "/dashboard"});}}/></div>)
 }

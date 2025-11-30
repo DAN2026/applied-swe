@@ -19,7 +19,7 @@ type FormProps = {
     errors?: Record<string, { errors: string[] }>;
   }>;
   successMsg: string
-  successFunc?: (email?:string, password?:string) => void;
+  successFunc?: () => void;
   redirect?: string
 };
 
@@ -93,15 +93,8 @@ export default function Form({fields,action,successMsg,redirect, successFunc}: F
       setErrors(null);
       setSuccess(true);
       setPending(false);
-      if (successFunc)
-      {
-        const email = formData.get("email")?.toString();
-        const password = formData.get("password")?.toString();
-
-        if (email && password)
-        {
-          successFunc(email, password);
-        }
+      if(successFunc){
+        successFunc()
       }
 
       if (redirect){
