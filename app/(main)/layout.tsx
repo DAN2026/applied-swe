@@ -26,8 +26,9 @@ export default async function RootLayout({
     
   return (
     <div className="">
-        <Navbar session={session}/>
+        {/* <Navbar session={session}/> */}
         {children}
+        
     </div>
   );
 }
