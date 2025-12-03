@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 import Navbar from "@/components/general/Navbar";
+import NavbarWrapper from "@/components/wrappers/NavbarWrapper";
 
 export default async function RootLayout({
   children,
@@ -16,7 +17,6 @@ export default async function RootLayout({
 }>) {
 
     const session = await getServerSession(authOptions)
-    console.log(session)
     if (!session?.user){
       redirect("/")
     }
@@ -26,9 +26,8 @@ export default async function RootLayout({
     
   return (
     <div className="">
-        {/* <Navbar session={session}/> */}
         {children}
-        
+        {/* <NavbarWrapper></NavbarWrapper> */}
     </div>
   );
 }

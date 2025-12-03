@@ -9,18 +9,35 @@ import { useState,useEffect } from "react"
 import { LucideX } from "lucide-react";
 import { LucideMenu } from "lucide-react";
 
+interface NavbarProps {
+  session: Session | null;
+}
 
-export default function Navbar(){
-    const [menuOpen, setMenuOpen] = useState(false);
+
+export default function Navbar({ session }: NavbarProps){
 
 
-  
+
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const [inSession, setSessionState] = useState(false);
+
+  console.log("Session:", session);
+
+  useEffect(() => {
+    setSessionState(session != null);
+  }, [session]);
+
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
-    { href: "/dashboard", label: "Dashboard" },
   ];
+
+  if (session) {
+  navLinks.push({ href: "/dashboard", label: "Dashboard" });
+}
+
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -40,6 +57,8 @@ export default function Navbar(){
 
   console.log("Navbar renders");
 
+
+
 const mobileDisplay = (
   <nav className="md:hidden fixed w-full h-[10vh] bg-[#123715]/85">
       <div className="flex justify-between items-center h-full w-full px-4">
@@ -56,7 +75,7 @@ const mobileDisplay = (
           <Link className="text-white text-[clamp(1rem,2vw,1.1rem)] " href="/">Sustain Wear</Link>
         </div>
           <div className="h-full w-[10%] flex items-center justify-center">
-            <button className="text-white h-full w-full flex items-center justify-center transition-colors duration-200 hover:bg-black" onClick={toggleMenu}>{!menuOpen ? <LucideMenu/>: <LucideX/> }</button>
+            <button className="text-white h-full w-full flex items-center justify-center transition-colors duration-200 hover:bg-[#123715]/15" onClick={toggleMenu}>{!menuOpen ? <LucideMenu/>: <LucideX/> }</button>
           </div>
       </div>
       <div className= {menuOpen ? "bg-[#123715]/85 w-full py-4 p-0 translate-y-0 pb-0 pt-0" : "w-0 py-0 -translate-y-100"}>
@@ -101,7 +120,9 @@ const mobileDisplay = (
                 {link.label}
               </Link>
             ))}
+            {session ==null  ? 
             <Link className="ml-6 flex items-center text-black bg-white text-[clamp(0.4rem,2vw,1.1rem)] pl-7 pr-7 pt-2 pb-2 rounded-[3px] shadow-[0_0_11px_1px_rgba(255,255,255,0.2)]" href="/login">Login</Link>
+            : <Link onClick={() => signOut()} className="ml-6 flex items-center text-black bg-white text-[clamp(0.4rem,2vw,1.1rem)] pl-7 pr-7 pt-2 pb-2 rounded-[3px] shadow-[0_0_11px_1px_rgba(255,255,255,0.2)]" href="/login">Logout</Link>}
           </div>
         </div>
       </nav>
