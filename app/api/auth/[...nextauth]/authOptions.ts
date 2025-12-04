@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma"
 import {NextAuthOptions} from "next-auth"
-import Credentials from "next-auth/providers/credentials"
+import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
 import bcrypt from "bcryptjs"
 import { Role } from "@prisma/client"
@@ -10,6 +10,32 @@ export const authOptions : NextAuthOptions = {
     clientId: process.env.GOOGLE_CLIENT_ID ?? '',
     clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? ''
   }),
+  CredentialsProvider({
+    name: "Credentials",
+    credentials:{
+      email: {label:"Email", type:"email",placeholder:"Email"},
+      password: {label:"Password", type:"password",placeholder:"Password"}
+    },
+    async authorize(credentials){
+      if(!credentials?.email || !credentials.password) return null;
+      const user = await prisma.user.findUnique({
+        where:{Email:credentials.email}
+      })
+      console.log("USER: ",user)
+      if (!user)return null;
+
+      const isValid = await bcrypt.compare(credentials.password, user.Password)
+      if (!isValid) return null;
+
+      return {
+        id: user.User_ID,
+        name: user.Username,
+        email: user.Email,
+        role: user.Role,
+        needsOnboarding: false
+      }
+    }
+  })
   ],
   session: {
     maxAge: 60 * 60
@@ -17,7 +43,7 @@ export const authOptions : NextAuthOptions = {
   callbacks: {
     async signIn({user, account}){
       const existingUser = await prisma.user.findUnique({
-        where: {Email: user.email!}
+        where: {Email: user.email!.toLowerCase()}
       })
       if (!existingUser){
         user.needsOnboarding = true
@@ -69,12 +95,10 @@ export const authOptions : NextAuthOptions = {
         token.needsOnboarding = user.needsOnboarding
       }
       if (trigger == "update"){
-        console.log("triggered update")
         const userCheck = await prisma.user.findUnique({
           where: {Email: token.email?.toLowerCase()}
         })
         if (userCheck){
-          console.log("found user")
           token.id = userCheck.User_ID
           token.name = userCheck.Username
           token.email = userCheck.Email

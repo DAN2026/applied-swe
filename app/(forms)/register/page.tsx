@@ -9,6 +9,17 @@ import { signIn } from "next-auth/react";
 
 
 export default function Register(){
+
+    const reg = async (formData:FormData) =>{
+      const result = await handleRegister(formData)
+      if (!result.success){
+        return result;
+      }
+      const email = formData.get("email")
+      const password = formData.get("password")
+      await signIn("credentials",{email:email,password:password,callbackUrl:"/dashboard"})
+      return {success:true}
+    }
     const fields = [
         {
             name: "username",
@@ -93,7 +104,7 @@ const mobileDisplay = (
   </div>
 
   <div className="flex flex-col flex-1 justify-center px-6 pt-6 pb-10">
-    <Form fields={fields} action={handleRegister} successMsg="Successfully registered" redirect="dashboard"/>
+            <Form fields={fields} action={reg} successMsg="Successfully registered" redirect="dashboard" />
     <div className="w-full flex justify-between text-center mt-2">
       <Link
         href="#"
@@ -146,7 +157,7 @@ const mobileDisplay = (
             Register
           </h2>
           <div className="p-6">
-            <Form fields={fields} action={handleRegister} successMsg="Successfully registered" redirect="dashboard" />
+            <Form fields={fields} action={reg} successMsg="Successfully registered" redirect="dashboard" />
             <div className="w-full flex justify-center text-center mt-2">
             <Link href="/login" className="text-base underline text-white hover:text-lime-200 transition-all duration-200 ease-in-out">Already have an account?</Link>
             </div>

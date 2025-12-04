@@ -23,16 +23,12 @@ import { useState } from "react"
 import { Button } from "../ui/button"
 import { ArrowDown, ArrowUp, ArrowUpDown, Minus } from "lucide-react"
 
-type DataTableProps = {
-  data: any[],
-  columns: ColumnDef<any>[],
-type: string}
+type DataTableProps<T=any> = {
+  data: T[],
+  columns: ColumnDef<T>[],
+rowClick?: (row:T)=>void}
 
-function DataTable({data,columns,type}:DataTableProps){
-  if (type == "Items"){
-    data as Items[]
-    columns as ColumnDef<Items>[]
-  }
+const DataTable = ({rowClick,data,columns}:DataTableProps) =>{
   const [sorting,setSorting] = useState<SortingState>([])
   const table = useReactTable({
     data, 
@@ -73,7 +69,7 @@ function DataTable({data,columns,type}:DataTableProps){
       <TableBody>
         {table.getRowModel().rows.length > 0 ? 
         (table.getRowModel().rows.map(row => (
-          <TableRow className="odd:bg-white even:bg-gray-50 hover:bg-gray-100 transition-all" key={row.id}>{row.getVisibleCells().map(cell => (
+          <TableRow onDoubleClick={rowClick?()=>rowClick(row.original):()=>{}} className="odd:bg-white even:bg-gray-50 hover:bg-gray-100 transition-all" key={row.id}>{row.getVisibleCells().map(cell => (
             <TableCell className="p-3 text-sm text-gray-800" key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
           ))}</TableRow>
         ))) : (<TableRow><TableCell colSpan={table.getAllColumns().length} className="bg-gray-50 text-gray-500 text-center p-6">No data available</TableCell></TableRow>)}
