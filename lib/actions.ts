@@ -1,7 +1,7 @@
 "use server"
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
-import {getServerSession} from 'next-auth'
+import {getServerSession, Session} from 'next-auth'
 import prisma from "./prisma";
 import { UserType } from "@/types/user";
 import bcrypt from "bcryptjs";
@@ -46,8 +46,7 @@ export async function CreateUser(user:UserType){
         }
 }
 
-export async function GetUserDonations(){
-  const session = await getServerSession(authOptions)
+export async function GetUserDonations(session:Session){
   if (!session?.user){
     return null
   }
@@ -61,13 +60,19 @@ export async function GetUserDonations(){
 }
 }
 
-export async function GetStaffDonations(){
-  const session = await getServerSession(authOptions)
+export async function GetStaffDonations(session:Session){
   if (!session?.user){
     return null
   }
   try{
-  const items = await prisma.items.findMany()
+  const items = await prisma.items.findMany({
+    where:{
+      Charity_ID:session.user.charityId,
+      NOT: {
+        Donor_ID:session.user.id
+      }
+    }
+  })
   return items
 }catch(e){
   return null
@@ -90,7 +95,6 @@ export async function GetCharityID(name:string){
 
 export async function CreateDonation(item:ItemType){
   try {
-    console.log(item)
     await prisma.items.create({
                 data: {
                     Item_Name: item.item_name,
@@ -112,4 +116,10 @@ export async function CreateDonation(item:ItemType){
   {
     return { success: false, errors: { general: { errors: [`An unknown error occurred. Please try again. ${e}`] } } };
   }
+}
+
+export async function GetCharityName(id:number){
+  const charity = await prisma.charity.findUnique(
+    {where:{Charity_ID: id}})
+  return charity?.Charity_Name
 }

@@ -85,8 +85,8 @@ export default function Form({fields,action,successMsg,redirect, successFunc}: F
     setPending(true);
     const formData = new FormData(e.currentTarget);
     const result = await action(formData);
-    if (!result.success){
-        setErrors(result.errors || null);
+    if (!result?.success){
+        setErrors(result?.errors || null);
         setPending(false);
     }
     else {

@@ -16,13 +16,14 @@ export async function handleRegister(formData: FormData) {
         return { success: false, errors:formattedErrors.properties }; //.properties contains <field:string, errors:string[]>
 
     }
+    console.log("REGISTRATION DATA",result.data)
 
         try
         {
             const create = await CreateUser({
                             username: data.username.toString(),
                             email: data.email.toString(),
-                            phone: data.phone.toString().trim().length === 0 ? undefined : data.phone.toString(),
+                            phone: data.mobile.toString().trim().length === 0 ? undefined : data.mobile.toString(),
                             password: data.password.toString(),
                             address: data.address.toString(),
                             postcode: data.postcode.toString(),
@@ -31,7 +32,7 @@ export async function handleRegister(formData: FormData) {
                         if (create){
                             return { success: true };
                         }
-                        else return {success: false, error: {general:{errors: ["Could not create user"]}}}
+                        else return {success: false, errors: {general:{errors: ["Could not create user"]}}}
         } 
         catch (e:any)
         {
@@ -50,6 +51,6 @@ export async function handleRegister(formData: FormData) {
                     }
                 };
             }
-            return { success: false, errors: { general: { errors: ["An unknown error occurred. Please try again.",e] } } };
+            return { success: false, errors: { general: { errors: ["An unknown error occurred. Please try again.",e instanceof Error ? e.message : String(e)] } } };
         }
 }

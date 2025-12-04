@@ -1,27 +1,39 @@
-"use server"
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions"
-import StaffDashboard from "@/components/dashboards/StaffDashboard"
-import UserDashboard from "@/components/dashboards/UserDashboard"
-import Navbar from "@/components/general/Navbar"
-import ButtonGroup from "@/components/general/TimeGroup"
-import { Button } from "@/components/ui/button"
-import { Role } from "@prisma/client"
-import { getServerSession } from "next-auth/next"
-import { redirect } from "next/navigation"
+"use client";
 
-export default async function Dashboard(){
-    const session = await getServerSession(authOptions)
-    if (!session){
-        redirect("/")
-    }
-    const dashboards = {
-        [Role.USER]: <UserDashboard/>,
-        [Role.STAFF]: <StaffDashboard/>,
-        [Role.ADMIN]: <UserDashboard/>
-    }
-    return (
-    <div>
-        
-        {dashboards[session.user.role as Role ?? <></>]}</div>
-)
+import { useState } from "react";
+import {Session} from "next-auth"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import UserDashboard from "@/components/dashboards/UserDashboard";
+import StaffDashboard from "@/components/dashboards/StaffDashboard";
+import { useSession } from "next-auth/react";
+import { Role } from "@prisma/client";
+
+export default function DashboardSwitcher() {
+  const session = useSession().data;
+  if (!session){
+    return(<></>)
+  }
+  const [defaultTab, setDefaultTab] = useState(
+     session.user.role === Role.STAFF ? "staff" : "user"
+  );
+
+  return (
+    <Tabs defaultValue={defaultTab} className="w-full">
+      <TabsList>
+        {session.user.role === Role.STAFF && (<>
+        <TabsTrigger value="user">Your Donations</TabsTrigger>
+          <TabsTrigger value="staff">All Donations</TabsTrigger>
+          </>)}
+      </TabsList>
+
+      
+      <TabsContent value="user">
+        <UserDashboard session={session}/>
+      </TabsContent>
+      {session.user.role === Role.STAFF && (
+        <TabsContent value="staff">
+          <StaffDashboard session={session}/>
+        </TabsContent>)}
+    </Tabs>
+  );
 }

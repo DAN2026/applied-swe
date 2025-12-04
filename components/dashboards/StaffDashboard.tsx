@@ -1,20 +1,20 @@
 "use client"
 
 import { GetStaffDonations } from "@/lib/actions"
-import { useEffect, useMemo, useState } from "react"
-import { Items } from "@prisma/client"
+import { ReactElement, useEffect, useMemo, useState } from "react"
+import { DonationStatus, Items } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import DataTable from "../general/DataTable"
 import ButtonGroup from "../general/TimeGroup"
-import { Button } from "../ui/button"
-import { useSession } from "next-auth/react"
-import CreateDonation from "./modals/CreateDonation"
+import { Session } from "next-auth"
+import ViewDonation from "./modals/ViewDonation"
+import { approveDonation } from "@/app/(main)/dashboard/actions"
 
-function useDonations() {
+function useDonations(session:Session) {
   const [donations, setDonations] = useState<Items[]>([])
   useEffect(() => {
     const fetch = async () => {
-      const d = await GetStaffDonations()
+      const d = await GetStaffDonations(session)
       setDonations(d as Items[])
     }
     fetch()
@@ -22,11 +22,10 @@ function useDonations() {
   return donations
 }
 
-export default function UserDashboard() {
-  const { data: session } = useSession()
-  const donations = useDonations()
+export default function UserDashboard({session}:{session:Session}) {
+  const donations = useDonations(session)
   const [timePeriod, setTimePeriod] = useState("All Time")
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [modal, setModal] = useState<ReactElement | null>(null)
 
   const filteredDonations = useMemo(() => {
     const now = new Date()
@@ -59,61 +58,37 @@ export default function UserDashboard() {
       }
     },
     {
-      accessorKey: "Collected",
-      header: "Collection Status",
+      accessorKey: "Status",
+      header: "Status",
       enableSorting: true,
       cell: ({row}) => {
-        const status = row.getValue("Collected") as boolean
-        return <span className={status ? "text-green-500" : "text-red-500"}>
-          {status ? "Collected" : "Awaiting Collection"}
-        </span>
+        const statusText = {
+          [DonationStatus.Distributed]:"text-green-700 font-semibold",
+          [DonationStatus.Collected]:"text-emerald-500 font-semibold",
+          [DonationStatus.Approved]:"text-emerald-600 font-semibold",
+          [DonationStatus.Pending]:"text-orange-500 font-semibold",
       }
-    },
-    {
-      accessorKey: "Distributed",
-      header: "Distribution Status",
-      enableSorting: true,
-      cell: ({ row }) => {
-        const status = row.getValue("Distributed") as boolean
-        return <span className={status ? "text-green-500" : "text-red-500"}>
-          {status ? "Distributed" : "Not Distributed"}
+        const status = row.getValue("Status") as DonationStatus
+        return <span className={statusText[status]}>
+          {status}
         </span>
       }
     }
   ], [])
 
-  const Layout = ({actions }: {actions?: React.ReactNode }) => (
-    <div className="min-h-screen bg-emerald-600 grid grid-rows-[10%_90%]">
-      {isModalOpen && <CreateDonation onClose={() => setIsModalOpen(false)} />}
-      <div className="flex flex-col justify-center p-5 text-white">
-        <h2 className="text-2xl m-5 font-semibold">Welcome {session?.user.name}</h2>
-      </div>
-      <div>
-      <div className="flex justify-between w-[90%] mx-auto">
-        <div>
-        {actions}
-        </div>
-        <div className="mx-4">
-        <ButtonGroup value={timePeriod} onChange={setTimePeriod} />
-        </div>
-      </div>
-      <div className="w-[90%] mx-auto">
-        <DataTable data={filteredDonations} columns={columns} type="Items" />
-      </div>
-    </div>
-    </div>
-  )
-
   return (
-    <>
-      {session?.user.role === "STAFF" ? (
-        <Layout
-        />
-      ) : (
-        <Layout
-          actions={<Button variant="outline" onClick={() => setIsModalOpen(true)}>Create Donation</Button>}
-        />
-      )}
-    </>
+    <div className="grid grid-rows-[10%_90%]">
+          {modal}
+          <div>
+          <div className="flex justify-between w-[90%] mx-auto">
+            <div className="mx-4">
+            <ButtonGroup value={timePeriod} onChange={setTimePeriod} />
+            </div>
+          </div>
+          <div className="w-[90%] mx-auto">
+            <DataTable data={filteredDonations as Items[]} rowClick={(item:Items)=> setModal(<ViewDonation item={item} onSendForReview={()=>{}} onApprove={async (id:number) => await approveDonation(id)} onClose={()=>{setModal(null)}}/>)} columns={columns}/>
+          </div>
+        </div>
+        </div>
   )
 }

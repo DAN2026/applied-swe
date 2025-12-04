@@ -7,16 +7,23 @@ import { handleLogin } from "./actions";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
+import { redirect } from "next/dist/server/api-utils";
 
 
 
 export default function Register(){
 
+  const cred = (formData:FormData) => {
+    const email = formData.get("email");
+    const password = formData.get("password");
+    signIn("credentials",{email, password, callbackUrl:"/dashboard"})
+    return {success:true}
+  }
   
     const fields = [
         {
-            name: "username",
-            placeholder: "Username",
+            name: "email",
+            placeholder: "Email",
             type: "text",
             className: "w-full",
             icon: <LucidePersonStanding/>,
@@ -63,7 +70,7 @@ const mobileDisplay = (
   </div>
 
   <div className="flex flex-col flex-1 justify-center px-6 pt-6 pb-10">
-    <Form fields={fields} action={handleLogin} successMsg="Successfully logged in" redirect="dashboard" />
+            <Form fields={fields} action={(formData:FormData)=>{cred(formData)}} successMsg="Successfully logged in" redirect="dashboard"/>
     <Button onClick={() => signIn("google", { callbackUrl: "/dashboard" })} className="flex items-center gap-2 p-5 m-4 rounded-md text-gray-700 bg-gray-100 hover:bg-gray-600 hover:text-white">
               <Image
                 src="/images/google.png"
@@ -125,7 +132,7 @@ const mobileDisplay = (
             Login
           </h2>
           <div className="p-6 flex flex-col justify-center">
-            <Form fields={fields} action={(handleLogin)} successMsg="Successfully logged in" redirect="dashboard"/>
+            <Form fields={fields} action={(formData:FormData)=>{cred(formData)}} successMsg="Successfully logged in" redirect="dashboard"/>
             <Button onClick={() => signIn("google", { callbackUrl: "/dashboard" })} className="flex items-center gap-2 p-5 m-4 rounded-md text-gray-700 bg-gray-100 hover:bg-gray-600 hover:text-white">
               <Image
                 src="/images/google.png"

@@ -45,7 +45,7 @@ model Items {
   Image       String
   Time        Times
   Pickup_Date DateTime
-  Distributed Boolean     @default(false)
+  Status DonationStatus @default(Pending)
   Donor       User        @relation(fields: [Donor_ID], references: [User_ID])
   Donor_ID    Int
   Charity     Charity     @relation(fields: [Charity_ID], references: [Charity_ID])
@@ -72,6 +72,13 @@ enum Times {
   Morning
   Afternoon
   Evening
+}
+
+enum DonationStatus {
+  Pending
+  Approved
+  Collected
+  Distributed
 }
 
 enum Size {

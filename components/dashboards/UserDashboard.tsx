@@ -2,29 +2,30 @@
 
 import { GetStaffDonations, GetUserDonations } from "@/lib/actions"
 import { useEffect, useMemo, useState } from "react"
-import { Items } from "@prisma/client"
+import { DonationStatus, Items } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import DataTable from "../general/DataTable"
 import ButtonGroup from "../general/TimeGroup"
 import { Button } from "../ui/button"
 import { useSession } from "next-auth/react"
 import CreateDonation from "./modals/CreateDonation"
+import { Session } from "next-auth"
+import { LucideArrowUpFromDot } from "lucide-react"
 
-function useDonations() {
+function useDonations(session:Session) {
   const [donations, setDonations] = useState<Items[]>([])
   useEffect(() => {
     const fetch = async () => {
-      const d = await GetUserDonations()
+      const d = await GetUserDonations(session)
       setDonations(d as Items[])
     }
     fetch()
-  }, [])
-  return donations
+  }, [session])
+  return {donations,setDonations}
 }
 
-export default function UserDashboard() {
-  const { data: session } = useSession()
-  const donations = useDonations()
+export default function UserDashboard({session}:{session:Session}) {
+  const {donations, setDonations} = useDonations(session)
   const [timePeriod, setTimePeriod] = useState("All Time")
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -49,6 +50,7 @@ export default function UserDashboard() {
     { accessorKey: "Donor_ID", header: "Donor ID"},
     { accessorKey: "Item_Name", header: "Name", enableSorting: true },
     { accessorKey: "Brand", header: "Brand", enableSorting: true },
+    {accessorKey:"Condition", header:"Condition", enableSorting:true},
     {
       accessorKey: "Date_Added",
       header: "Date Donated",
@@ -59,35 +61,27 @@ export default function UserDashboard() {
       }
     },
     {
-      accessorKey: "Collected",
-      header: "Collection Status",
+      accessorKey: "Status",
+      header: "Status",
       enableSorting: true,
       cell: ({row}) => {
-        const status = row.getValue("Collected") as boolean
-        return <span className={status ? "text-green-500" : "text-red-500"}>
-          {status ? "Collected" : "Awaiting Collection"}
-        </span>
+        const statusText = {
+          [DonationStatus.Distributed]:"text-green-700 font-semibold",
+          [DonationStatus.Collected]:"text-green-500 font-semibold",
+          [DonationStatus.Approved]:"text-green-300 font-semibold",
+          [DonationStatus.Pending]:"text-orange-500 font-semibold",
       }
-    },
-    {
-      accessorKey: "Distributed",
-      header: "Distribution Status",
-      enableSorting: true,
-      cell: ({ row }) => {
-        const status = row.getValue("Distributed") as boolean
-        return <span className={status ? "text-green-500" : "text-red-500"}>
-          {status ? "Distributed" : "Not Distributed"}
+        const status = row.getValue("Status") as DonationStatus
+        return <span className={statusText[status]}>
+          {status}
         </span>
       }
     }
   ], [])
 
   return (
-    <div className="min-h-screen bg-emerald-600 grid grid-rows-[10%_90%]">
+    <div className="grid grid-rows-[10%_90%]">
       {isModalOpen && <CreateDonation onClose={() => setIsModalOpen(false)} />}
-      <div className="flex flex-col justify-center p-5 text-white">
-        <h2 className="text-2xl m-5 font-semibold">Welcome {session?.user.name}</h2>
-      </div>
       <div>
       <div className="flex justify-between w-[90%] mx-auto">
         <div>
@@ -98,7 +92,7 @@ export default function UserDashboard() {
         </div>
       </div>
       <div className="w-[90%] mx-auto">
-        <DataTable data={filteredDonations} columns={columns} type="Items" />
+        <DataTable data={filteredDonations} columns={columns} />
       </div>
     </div>
     </div>

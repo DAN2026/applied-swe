@@ -4,10 +4,9 @@ import Link from "next/link"
 import { Button } from "../ui/button"
 import {signOut} from "next-auth/react"
 import { Session } from "next-auth"
-import { Role } from "@prisma/client"
 
 
-export default function Navbar(){
+export default function Navbar({session}:{session:Session}){
     return(
           <div className="bg-emerald-400 h-[100px] flex justify-between items-center shadow-lg text-white font-semibold text-lg px-[5%]">
           <Link href="/" className="hover:underline">Test Link</Link>

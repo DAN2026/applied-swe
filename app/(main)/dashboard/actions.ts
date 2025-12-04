@@ -2,9 +2,10 @@
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { CreateDonation, CreateUser, GetCharityID } from "@/lib/actions";
+import prisma from "@/lib/prisma";
 import { donation } from "@/schemas/donation";
 import { ItemType } from "@/types/item";
-import { Condition, Role, Size, Times } from "@prisma/client";
+import { Condition, Role, Size, Times, DonationStatus } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { success, z } from "zod";
 
@@ -14,7 +15,6 @@ export async function handleDonation(formData: FormData) {
         return { success: false, errors: { general: { errors: ["Not authenticated"] } }}
     }
     const user = session.user;
-    console.log(session)
     const data = Object.fromEntries(formData.entries());
     const result = donation.safeParse(data);
 
@@ -43,5 +43,21 @@ export async function handleDonation(formData: FormData) {
     }
     else{
         return {success:false, errors:create.errors}
+    }
+}
+
+export async function approveDonation(id: number){
+    try{
+        const updated = await prisma.items.update({
+            where:{Item_No:id},
+            data:{Status:DonationStatus.Approved}
+        })
+        if (updated){
+        return true
+        }
+        return true
+    }
+    catch{
+        return false
     }
 }
