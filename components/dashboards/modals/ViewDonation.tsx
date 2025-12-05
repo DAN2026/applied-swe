@@ -4,6 +4,7 @@ import { LucideX } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Items } from "@prisma/client"
 import { useState } from "react"
+import { sendForResubmit } from "@/app/(main)/dashboard/actions"
 
 type ModalProps = {
   onClose: () => void,
@@ -16,6 +17,15 @@ export default function ViewDonation({ onClose, item, onApprove, onSendForReview
   const [success, setSuccess] = useState<boolean | null>(null);
   const approve = async () => {
     const result = await onApprove(item.Item_No);
+    if (result){
+      setSuccess(true)
+    }
+    else{
+      setSuccess(false)
+    }
+  }
+    const review = async () => {
+    const result = await sendForResubmit(item.Item_No);
     if (result){
       setSuccess(true)
     }
@@ -72,7 +82,7 @@ export default function ViewDonation({ onClose, item, onApprove, onSendForReview
 
         </div>
         <div className="flex justify-end gap-3 border-t px-5 py-4 bg-gray-50 rounded-b-2xl">
-          <Button variant="outline" className="bg-red-600 text-white hover:bg-red-500 hover:text-white" onClick={() => onSendForReview(item.Item_No)}>
+          <Button variant="outline" className="bg-red-600 text-white hover:bg-red-500 hover:text-white" onClick={review}>
             Send for Resubmit
           </Button>
           <Button className="bg-emerald-600 hover:bg-emerald-500 hover:text-white" onClick={approve}>

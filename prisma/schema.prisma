@@ -77,6 +77,7 @@ enum Times {
 enum DonationStatus {
   Pending
   Approved
+  Rejected
   Collected
   Distributed
 }
