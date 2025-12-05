@@ -14,7 +14,7 @@ export default function ButtonGroup({value, onChange}:ButtonGroupProps){
                 key={option} 
                 onClick={()=>{onChange(option)}} 
                 variant="outline"
-                className={`${value === option ? "bg-gray-600 text-white hover:bg-gray-500 hover:text-white" : "bg-white"} text-base rounded-b-none`}
+                className={`${value === option ? "bg-gray-600 text-white hover:bg-gray-500 hover:text-white" : "bg-white"} text-base`}
                 >
                     {option}
                 </Button>
