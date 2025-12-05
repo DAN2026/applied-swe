@@ -7,8 +7,6 @@ import { ColumnDef } from "@tanstack/react-table"
 import DataTable from "../general/DataTable"
 import ButtonGroup from "../general/TimeGroup"
 import { Session } from "next-auth"
-import ViewDonation from "./modals/ViewDonation"
-import { approveDonation } from "@/app/(main)/dashboard/actions"
 
 function useDonations(session:Session) {
   const [donations, setDonations] = useState<Items[]>([])
@@ -64,9 +62,10 @@ export default function UserDashboard({session}:{session:Session}) {
       cell: ({row}) => {
         const statusText = {
           [DonationStatus.Distributed]:"text-green-700 font-semibold",
-          [DonationStatus.Collected]:"text-emerald-500 font-semibold",
-          [DonationStatus.Approved]:"text-emerald-600 font-semibold",
+          [DonationStatus.Collected]:"text-green-700 font-semibold",
+          [DonationStatus.Approved]:"text-green-500 font-semibold",
           [DonationStatus.Pending]:"text-orange-500 font-semibold",
+          [DonationStatus.Rejected]:"text-red-500 font-semibold"
       }
         const status = row.getValue("Status") as DonationStatus
         return <span className={statusText[status]}>
@@ -77,18 +76,15 @@ export default function UserDashboard({session}:{session:Session}) {
   ], [])
 
   return (
-    <div className="grid grid-rows-[10%_90%]">
-          {modal}
-          <div>
-          <div className="flex justify-between w-[90%] mx-auto">
-            <div className="mx-4">
-            <ButtonGroup value={timePeriod} onChange={setTimePeriod} />
-            </div>
-          </div>
-          <div className="w-[90%] mx-auto">
-            <DataTable data={filteredDonations as Items[]} rowClick={(item:Items)=> setModal(<ViewDonation item={item} onSendForReview={()=>{}} onApprove={async (id:number) => await approveDonation(id)} onClose={()=>{setModal(null)}}/>)} columns={columns}/>
-          </div>
+    <div className="gap-6 px-6 h-[calc(100vh-80px)]">
+      <div className="flex flex-col overflow-hidden bg-white rounded-xl border shadow">
+        <div className="flex justify-between items-center p-3 border-b bg-gray-50">
+          <ButtonGroup value={timePeriod} onChange={setTimePeriod} />
         </div>
+        <div className="flex-1 overflow-auto p-2">
+          <DataTable data={filteredDonations} columns={columns} />
         </div>
+      </div>
+      </div>
   )
 }

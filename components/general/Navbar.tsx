@@ -20,8 +20,6 @@ export default function Navbar({ session }: NavbarProps){
 
   const [inSession, setSessionState] = useState(false);
 
-  console.log("Session:", session);
-
   useEffect(() => {
     setSessionState(session != null);
   }, [session]);
@@ -53,7 +51,7 @@ export default function Navbar({ session }: NavbarProps){
   }, [menuOpen]);
 
 const mobileDisplay = (
-  <nav className="md:hidden fixed w-full h-[10vh] bg-[#123715]/85">
+  <nav className="md:hidden fixed w-full z-50 h-[10vh] bg-emerald-600/85">
       <div className="flex justify-between items-center h-full w-full px-4">
          <div className="grid grid-cols-[auto_1fr] items-center gap-2 min-w-[100px] max-w-[200px] h-full ">
           <div className="relative h-full w-10"> 
@@ -68,7 +66,7 @@ const mobileDisplay = (
           <Link className="text-white text-[clamp(1rem,2vw,1.1rem)] " href="/">Sustain Wear</Link>
 </div></div></nav>)
   const desktopDisplay = (
-    <nav className="hidden md:flex fixed w-full h-[10vh] bg-[#123715]/85">
+    <nav className="hidden md:flex z-50 w-full h-[12vh] bg-emerald-700/85">
       <div className="flex justify-between items-center h-full w-full px-8">
         <div className="grid grid-cols-[auto_1fr] items-center gap-2 min-w-[100px] max-w-[200px] h-full ">
         <div className="relative h-full w-16"> 
@@ -93,34 +91,17 @@ const mobileDisplay = (
             </Link>
           ))}
           {session ==null  ? 
-          <Link className="ml-6 flex items-center text-black bg-white text-[clamp(0.4rem,2vw,1.1rem)] pl-7 pr-7 pt-2 pb-2 rounded-[3px] shadow-[0_0_11px_1px_rgba(255,255,255,0.2)]" href="/login">Login</Link>
-          : <Link onClick={() => signOut()} className="ml-6 flex items-center text-black bg-white text-[clamp(0.4rem,2vw,1.1rem)] pl-7 pr-7 pt-2 pb-2 rounded-[3px] shadow-[0_0_11px_1px_rgba(255,255,255,0.2)]" href="/login">Logout</Link>}
+          <Link className="ml-6 hover:bg-gray-100 transition-colors flex items-center text-black bg-white text-[clamp(0.4rem,2vw,1.1rem)] pl-7 pr-7 pt-2 pb-2 rounded-[3px] shadow-[0_0_11px_1px_rgba(255,255,255,0.2)]" href="/login">Login</Link>
+          : <Link onClick={() => signOut()} className="ml-6 flex hover:bg-gray-200 transition-colors items-center text-black bg-white text-[clamp(0.4rem,2vw,1.1rem)] pl-7 pr-7 pt-2 pb-2 rounded-[3px] shadow-[0_0_11px_1px_rgba(255,255,255,0.2)]" href="/login">Logout</Link>}
         </div>
       </div>
     </nav>
 
   );
-
-
-
     return(
       <div>
           {mobileDisplay}
           {desktopDisplay}
       </div>
-        //   <div className="bg-emerald-400 h-[100px] flex justify-between items-center shadow-lg text-white font-semibold text-lg px-[5%]">
-        //   <Link href="/" className="hover:underline">Test Link</Link>
-        //   <Link href="/" className="hover:underline">Test Link</Link>
-        //   <Image
-        //     src="/images/sustainwear-transparent-white.png"
-        //     alt="SustainWear Logo"
-        //     width={120}
-        //     height={120}
-        //     className="w-fit"
-        //   />
-        //   <Link href="/" className="hover:underline">Test Link</Link>
-        //   <Button onClick={()=>{signOut()}} className="hover:underline">Logout</Button>
-        // </div>
-
     )
 }

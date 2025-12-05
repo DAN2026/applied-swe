@@ -61,3 +61,19 @@ export async function approveDonation(id: number){
         return false
     }
 }
+
+export async function sendForResubmit(id: number){
+    try{
+        const updated = await prisma.items.update({
+            where:{Item_No:id},
+            data:{Status:DonationStatus.Rejected}
+        })
+        if (updated){
+        return true
+        }
+        return true
+    }
+    catch{
+        return false
+    }
+}

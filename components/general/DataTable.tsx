@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useState } from "react"
 import {
   ColumnDef,
   flexRender,
@@ -18,64 +18,104 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Items } from "@prisma/client"
-import { useState } from "react"
 import { Button } from "../ui/button"
-import { ArrowDown, ArrowUp, ArrowUpDown, Minus } from "lucide-react"
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react"
 
-type DataTableProps<T=any> = {
-  data: T[],
-  columns: ColumnDef<T>[],
-rowClick?: (row:T)=>void}
+type DataTableProps<T = any> = {
+  data: T[]
+  columns: ColumnDef<T>[]
+  rowClick?: (row: T) => void
+}
 
-const DataTable = ({rowClick,data,columns}:DataTableProps) =>{
-  const [sorting,setSorting] = useState<SortingState>([])
+const DataTable = ({ rowClick, data, columns }: DataTableProps) => {
+  const [sorting, setSorting] = useState<SortingState>([])
+
   const table = useReactTable({
-    data, 
-    columns, 
-    state: {sorting},
+    data,
+    columns,
+    state: { sorting },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel()
+    getSortedRowModel: getSortedRowModel(),
   })
 
+  const visibleRows = table.getRowModel().rows
+  const minRows = 8
+  const skeletonCount = Math.max(0, minRows - visibleRows.length)
+  const totalColumns = table.getAllLeafColumns().length
+
   return (
-    <Table className="bg-white shadow-md rounded-lg overflow-hidden rounded-b-none">
+    <Table className="bg-gray-50 overflow-hidden rounded-2xl">
       <TableHeader>
-        {table.getHeaderGroups().map(headerGroup => (
-          <TableRow key={headerGroup.id}>{headerGroup.headers.map(header => (
-            <TableHead
-  key={header.id}
-  className="p-3 bg-gray-100 text-gray-700 font-semibold uppercase tracking-wide"
->
-  {header.isPlaceholder ? null : (
-    <Button
-      variant="ghost"
-      onClick={header.column.getToggleSortingHandler()}
-      className="flex items-center gap-2"
-    >
-      {flexRender(header.column.columnDef.header, header.getContext())}
-      {{
-        asc: <ArrowUp className="h-4 w-4 text-emerald-600" />,
-        desc: <ArrowDown className="h-4 w-4 text-emerald-600" />,
-        false: <ArrowUpDown className="h-4 w-4 opacity-30" />,
-      }[header.column.getIsSorted() as string] ?? null}
-    </Button>
-  )}
-</TableHead>
-          ))}</TableRow>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <TableHead
+                key={header.id}
+                className="p-3 bg-gray-100 text-gray-700 font-semibold uppercase tracking-wide"
+              >
+                {header.isPlaceholder ? null : (
+                  <Button
+                    variant="ghost"
+                    onClick={header.column.getToggleSortingHandler()}
+                    className="flex items-center gap-2"
+                  >
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                    {{
+                      asc: <ArrowUp className="h-4 w-4 text-emerald-600" />,
+                      desc: <ArrowDown className="h-4 w-4 text-emerald-600" />,
+                      false: <ArrowUpDown className="h-4 w-4 opacity-30" />,
+                    }[header.column.getIsSorted() as string] ?? null}
+                  </Button>
+                )}
+              </TableHead>
+            ))}
+          </TableRow>
         ))}
       </TableHeader>
+
       <TableBody>
-        {table.getRowModel().rows.length > 0 ? 
-        (table.getRowModel().rows.map(row => (
-          <TableRow onDoubleClick={rowClick?()=>rowClick(row.original):()=>{}} className="odd:bg-white even:bg-gray-50 hover:bg-gray-100 transition-all" key={row.id}>{row.getVisibleCells().map(cell => (
-            <TableCell className="p-3 text-sm text-gray-800" key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-          ))}</TableRow>
-        ))) : (<TableRow><TableCell colSpan={table.getAllColumns().length} className="bg-gray-50 text-gray-500 text-center p-6">No data available</TableCell></TableRow>)}
+        {/* REAL ROWS */}
+        {visibleRows.map((row) => (
+          <TableRow
+            key={row.id}
+            onDoubleClick={rowClick ? () => rowClick(row.original) : undefined}
+            className="odd:bg-white even:bg-gray-50 hover:bg-gray-100 transition-all"
+          >
+            {row.getVisibleCells().map((cell) => (
+              <TableCell key={cell.id} className="p-3 text-sm text-gray-800">
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+
+        {/* NO DATA ROW */}
+        {visibleRows.length === 0 && (
+          <TableRow>
+            <TableCell
+              colSpan={totalColumns}
+              className="bg-gray-50 text-gray-500 text-center p-6"
+            >
+              No data available
+            </TableCell>
+          </TableRow>
+        )}
+
+        {/* SKELETON ROWS */}
+        {visibleRows.length > 0 &&
+          Array.from({ length: skeletonCount }).map((_, i) => (
+            <TableRow key={`skeleton-${i}`} className="odd:bg-white even:bg-gray-50">
+              {Array.from({ length: totalColumns }).map((_, j) => (
+                <TableCell key={j} className="p-3">
+                  <div className="h-4 w-full"></div>
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
       </TableBody>
     </Table>
   )
 }
 
-export default React.memo(DataTable);
+export default React.memo(DataTable)
