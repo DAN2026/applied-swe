@@ -125,6 +125,8 @@ export async function GetCharityName(id:number){
   return charity?.Charity_Name
 }
 
+// Was gonna display number of items/staff etc... not in use currently
+
 export async function GetTotalItems() {
   try {
     const total = await prisma.items.count();
@@ -176,3 +178,6 @@ export async function GetTotalAdmins(){
     return 0; 
   }
 }
+
+
+
