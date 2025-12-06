@@ -3,7 +3,8 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "../api/auth/[...nextauth]/authOptions";
-import Navbar from "@/components/general/Navbar";
+import Navbar from "@/components/general/LandingNavbar";
+import DashboardNavbar from "@/components/general/DashboardSidebar";
 
 export default async function RootLayout({
   children,
@@ -21,9 +22,14 @@ export default async function RootLayout({
   }
     
   return (
-    <div className="">
-        <Navbar session={session}/>
-        {children}
-    </div>
+    // <div className="grid grid-cols-[15%_85%] ">
+    //   <div>
+    //     <DashboardNavbar session={session}></DashboardNavbar>
+    //   </div>
+    //   <div>
+    //     {children}
+    //     </div>
+    // </div>
+    <div>{children}</div>
   );
 }

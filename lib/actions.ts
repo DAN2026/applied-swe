@@ -6,6 +6,7 @@ import prisma from "./prisma";
 import { UserType } from "@/types/user";
 import bcrypt from "bcryptjs";
 import { ItemType } from "@/types/item";
+import { Role } from "@prisma/client";
 
 export async function CreateUser(user:UserType){
   try {
@@ -61,9 +62,9 @@ export async function GetUserDonations(session:Session){
 }
 
 export async function GetStaffDonations(session:Session){
-  if (!session?.user){
-    return null
-  }
+  if (!session?.user) return null;
+
+
   try{
   const items = await prisma.items.findMany({
     where:{
@@ -122,4 +123,56 @@ export async function GetCharityName(id:number){
   const charity = await prisma.charity.findUnique(
     {where:{Charity_ID: id}})
   return charity?.Charity_Name
+}
+
+export async function GetTotalItems() {
+  try {
+    const total = await prisma.items.count();
+    return total;
+  } catch (e) {
+    console.error(e);
+    return 0; 
+  }
+}
+
+export async function GetTotalStaff(){
+  try {
+    const totalStaff = await prisma.user.count({
+      where: {
+        Role: Role.STAFF,
+      },
+    });
+    return totalStaff;
+  } catch (e) {
+    console.error(e);
+    return 0; 
+  }
+}
+
+export async function GetTotalUsers(){
+  try {
+    const users = await prisma.user.count({
+      where: {
+        Role: Role.USER,
+      },
+    });
+    return users;
+  } catch (e) {
+    console.error(e);
+    return 0; 
+  }
+}
+
+export async function GetTotalAdmins(){
+  try {
+    const users = await prisma.user.count({
+      where: {
+        Role: Role.ADMIN,
+      },
+    });
+    return users;
+  } catch (e) {
+    console.error(e);
+    return 0; 
+  }
 }

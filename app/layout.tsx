@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "./api/auth/[...nextauth]/authOptions";
 import Provider from "@/components/general/Provider";
 import "./globals.css"; 
-import Navbar from "@/components/general/Navbar";
+import Navbar from "@/components/general/LandingNavbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

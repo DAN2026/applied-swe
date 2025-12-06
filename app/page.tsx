@@ -1,4 +1,4 @@
-import Navbar from "@/components/general/Navbar";
+import Navbar from "@/components/general/LandingNavbar";
 import NavbarWrapper from "@/components/wrappers/NavbarWrapper";
 import prisma from "@/lib/prisma";
 
