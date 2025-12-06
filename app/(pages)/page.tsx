@@ -1,4 +1,4 @@
-import Navbar from "@/components/general/Navbar";
+import Navbar from "@/components/general/LandingNavbar";
 import NavbarWrapper from "@/components/wrappers/NavbarWrapper";
 import prisma from "@/lib/prisma";
 import { LucideMail, LucidePhone } from "lucide-react";
@@ -8,6 +8,7 @@ import Link from "next/link";
 export default function Landing(){
     return (
         <div className="w-full">
+                <NavbarWrapper></NavbarWrapper>
           <div id="" className="w-full flex flex-col items-center bg-linear-to-b from-emerald-700 to-green-600 text-white px-6 md:px-16 py-16">
             <Image
               src="/images/sustainwear-transparent-white.png"

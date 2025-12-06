@@ -2,7 +2,7 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "./../api/auth/[...nextauth]/authOptions";
-import Navbar from "@/components/general/Navbar";
+import Navbar from "@/components/general/LandingNavbar";
 
 export default async function RootLayout({
   children,
@@ -13,7 +13,7 @@ export default async function RootLayout({
     const session = await getServerSession(authOptions)
   return (
     <div className="">
-        <Navbar session={session}/>
+        {/* <Navbar session={session}/> */}
         {children}
     </div>
   );
