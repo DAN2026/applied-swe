@@ -2,7 +2,7 @@
 
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { authOptions } from "../api/auth/[...nextauth]/authOptions";
+import { authOptions } from "../../api/auth/[...nextauth]/authOptions";
 import Navbar from "@/components/general/Navbar";
 
 export default async function RootLayout({
@@ -12,7 +12,6 @@ export default async function RootLayout({
 }>) {
 
     const session = await getServerSession(authOptions)
-    console.log(session)
     if (!session?.user){
       redirect("/")
     }
@@ -22,7 +21,6 @@ export default async function RootLayout({
     
   return (
     <div className="">
-        <Navbar session={session}/>
         {children}
     </div>
   );

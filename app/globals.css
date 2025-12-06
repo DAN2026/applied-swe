@@ -132,3 +132,7 @@
 .text-outline {
   -webkit-text-stroke: var(--weight) #ffffff;
 }
+
+html {
+  scroll-behavior: smooth;
+}

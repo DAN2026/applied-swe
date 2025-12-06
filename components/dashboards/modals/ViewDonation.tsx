@@ -4,7 +4,7 @@ import { LucideX } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Items } from "@prisma/client"
 import { useState } from "react"
-import { sendForResubmit } from "@/app/(main)/dashboard/actions"
+import { sendForResubmit } from "@/app/(pages)/(main)/dashboard/actions"
 
 type ModalProps = {
   onClose: () => void,

@@ -3,13 +3,9 @@
 import Form from "@/components/general/Form";
 import { LucideKey, LucideMail, LucidePersonStanding, LucidePin } from "lucide-react";
 import Image from "next/image";
-import { handleLogin } from "./actions";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
-import { redirect } from "next/dist/server/api-utils";
-
-
 
 export default function Register(){
 

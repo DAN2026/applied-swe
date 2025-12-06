@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { LucideX } from "lucide-react"
 import Form from "@/components/general/Form"
 import { GetCharities } from "@/lib/actions"
-import { handleDonation } from "@/app/(main)/dashboard/actions"
+import { handleDonation } from "@/app/(pages)/(main)/dashboard/actions"
 
 type ModalProps = {
   onClose: () => void
