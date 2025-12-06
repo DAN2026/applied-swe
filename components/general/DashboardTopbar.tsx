@@ -47,14 +47,16 @@ export default function DashboardTopbar({ session,menuOpen,toggleMenu,tab }: Nav
             <div className="h-full w-[100%] flex">
                 <div className="h-full w-[7.5%] flex items-center justify-center">
                     <Button
-                    className={`h-[50%] w-[40%] rounded-[8] text-black bg-transparent transition-transform duration-300 hover:bg-black/30 transition-colors duration-250
+                    className={
+                    `h-[50%] w-[40%] rounded-[8] text-black bg-transparent transition-transform duration-300
+                    hover:bg-black/30 transition-all duration-300
                     ${menuOpen ? "rotate-0" : "rotate-90"}`}
                     onClick={()=>toggleMenu(!menuOpen)}>
                         <LucideMenu className="!h-[25] !w-[25]" /> 
                     </Button>
                 </div>
                 <div className="h-full w-[40%] flex items-center">
-                    <h1 className=" text-lg">
+                    <h1 className="text-lg font-semibold">
                         {currentTitle}
                     </h1>
                 </div>
