@@ -53,7 +53,7 @@ export default function DashboardTopbar({ session,menuOpen,toggleMenu,tab }: Nav
                     ${menuOpen ? "rotate-0" : "rotate-90"}`}
                     onClick={()=>toggleMenu(!menuOpen)}>
                         <LucideMenu className="!h-[25] !w-[25]" /> 
-                    </Button>
+                    </Button>   
                 </div>
                 <div className="h-full w-[40%] flex items-center">
                     <h1 className="text-lg font-semibold">
@@ -61,10 +61,10 @@ export default function DashboardTopbar({ session,menuOpen,toggleMenu,tab }: Nav
                     </h1>
                 </div>
             </div>
-            <div className="h-full w-[15%] flex">
+            <div className="h-full w-[20%] flex">
                 <div className=" h-full w-[33%] flex items-center justify-center">
                     <Button className={"h-[80%] w-[80%] text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
-                        <User className="!h-[3.5vh] !w-[3.5vw]"/>
+                        <User className="!h-[2.5vh] !w-[2.5vw]"/>
                     </Button>
                 </div>
                 <div className=" h-full w-[67%] flex items-center">

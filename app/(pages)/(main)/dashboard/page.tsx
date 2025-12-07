@@ -10,29 +10,37 @@ import { Role } from "@prisma/client";
 import AdminDashboard from "@/components/dashboards/AdminDashboard";
 import DashboardNavbar from "@/components/general/DashboardSidebar";
 import DashboardTopbar from "@/components/general/DashboardTopbar";
-import { GetTodaysDonationsWithGrowth,GetNewUsersWithGrowth,GetPendingDonationsWithGrowth } from "@/lib/actions";
+import { GetTodaysDonationsWithGrowth,GetNewUsersWithGrowth,GetPendingDonationsWithGrowth,GetMonthlyUserCounts } from "@/lib/actions";
 
 export default function DashboardSwitcher() {
 
   //#region Data type
 
   type StatWithGrowth = {
-      today: number | null;
-      yesterday: number | null;
-      growth: number | null;
+    today: number | null;
+    yesterday: number | null;
+    growth: number | null;
   };
 
   type AdminData = {
-      donations: StatWithGrowth | null;
-      users: StatWithGrowth | null;
-      pendingDonations: StatWithGrowth | null;
+    donations: StatWithGrowth | null;
+    users: StatWithGrowth | null;
+    pendingDonations: StatWithGrowth | null;
+    userChartData?: userChartData | null;
+  };
+
+  type userChartData = {
+    data: { name: string; Users: number }[];
+    isAnimationActive?: boolean;
   };
 
   type DashboardData = {
-      admin?: AdminData;
-      staff?: any; 
-      user?: any;  
+    admin?: AdminData;
+    staff?: any; 
+    user?: any;  
   };
+
+
 
   //#endregion
 
@@ -40,8 +48,6 @@ export default function DashboardSwitcher() {
   //#region Use States
 
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
-
-  const [loading, setLoading] = useState(true);
 
   const [menuOpen, toggleMenu] = useState(true);
 
@@ -68,13 +74,12 @@ export default function DashboardSwitcher() {
   const fetchDashboardData = async () => {
     if (!session) return;
     try {
-      setLoading(true);
-
       if (session.user.role === Role.ADMIN) {
-        const [donations, users, pendingDonations] = await Promise.all([
+        const [donations, users, pendingDonations,userChartData] = await Promise.all([
           GetTodaysDonationsWithGrowth(),
           GetNewUsersWithGrowth(),
           GetPendingDonationsWithGrowth(),
+          GetMonthlyUserCounts(),
         ]);
 
         setDashboardData({
@@ -82,13 +87,13 @@ export default function DashboardSwitcher() {
             donations,
             users,
             pendingDonations,
+            userChartData: { data: userChartData },         
           },
         });
       }
     } catch (err) {
       console.error("Failed to fetch dashboard data", err);
     } finally {
-      setLoading(false);
     }
   };
   fetchDashboardData();

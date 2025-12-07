@@ -125,7 +125,6 @@ export async function GetCharityName(id:number){
   return charity?.Charity_Name
 }
 
-
 export async function GetTodaysDonationsWithGrowth() {
   try {
     // Today's date range
@@ -271,5 +270,39 @@ export async function GetPendingDonationsWithGrowth() {
   }
 }
 
+
+export async function GetMonthlyUserCounts() {
+  try {
+
+    const users = await prisma.user.findMany({
+      select: {
+        Date_Joined: true,
+      },
+    });
+
+    const monthLabels = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+
+    const counts = monthLabels.map(() => 0);
+
+    users.forEach(user => {
+      const month = user.Date_Joined.getMonth(); 
+      counts[month]++;
+    });
+
+    const data = monthLabels.map((label, index) => ({
+      name: label,
+      Users: counts[index]
+    }));
+
+    return data;
+
+  } catch (error) {
+    console.error("Error fetching monthly user counts:", error);
+    return [];
+  }
+}
 
 
