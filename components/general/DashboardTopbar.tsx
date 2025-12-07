@@ -64,7 +64,7 @@ export default function DashboardTopbar({ session,menuOpen,toggleMenu,tab }: Nav
             <div className="h-full w-[15%] flex">
                 <div className=" h-full w-[33%] flex items-center justify-center">
                     <Button className={"h-[80%] w-[80%] text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
-                        <User className="!h-[50%] !w-[50%]"/>
+                        <User className="!h-[3.5vh] !w-[3.5vw]"/>
                     </Button>
                 </div>
                 <div className=" h-full w-[67%] flex items-center">
