@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image"
 import Link from "next/link"
-import { Button } from "../ui/button"
+import { Button } from "@/components/ui/button"
 import {signOut} from "next-auth/react"
 import { Session } from "next-auth"
 import { Role } from "@prisma/client"
@@ -19,7 +19,7 @@ interface NavbarProps {
 }
 
 
-export default function DashboardTopbar({ session,menuOpen,toggleMenu,tab }: NavbarProps){
+export default function Topbar({ session,menuOpen,toggleMenu,tab }: NavbarProps){
 
     const [inSession, setSessionState] = useState(false);
 
@@ -31,8 +31,6 @@ export default function DashboardTopbar({ session,menuOpen,toggleMenu,tab }: Nav
         <nav>
         </nav>
     ); 
-
-    console.log(tab)
 
     const tabTitle = {
         "user" : "Dashboard / Personal",

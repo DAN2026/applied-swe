@@ -288,11 +288,11 @@ export async function GetMonthlyUserCounts() {
     const counts = monthLabels.map(() => 0);
 
     users.forEach(user => {
-      const month = user.Date_Joined.getMonth(); 
+      const month = user.Date_Joined.getMonth(); // 0 = jan 11 = dec
       counts[month]++;
     });
 
-    const data = monthLabels.map((label, index) => ({
+    const data = monthLabels.map((label, index) => ({ // Here we are mapping the user count to their month
       name: label,
       Users: counts[index]
     }));
@@ -304,5 +304,75 @@ export async function GetMonthlyUserCounts() {
     return [];
   }
 }
+
+export async function GetDonationCountsByMonth() {
+  const items = await prisma.items.findMany({
+    select: {
+      Charity: { select: { Charity_Name: true } },
+      Date_Added: true,
+    },
+  });
+
+  const charityList = [
+    "Cancer Research UK",
+    "Oxfam",
+    "Mind",
+    "Salvation Army",
+    "British Heart Foundation",
+  ];
+
+  const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  // Create a map: month -> charity -> count
+  const monthlyMap: Record<string, Record<string, number>> = {};
+
+  items.forEach(item => {
+    const monthKey = `${monthNames[item.Date_Added.getMonth()]} ${item.Date_Added.getFullYear()}`;
+
+    if (!monthlyMap[monthKey]) {
+      monthlyMap[monthKey] = {};
+      charityList.forEach(charity => {
+        monthlyMap[monthKey][charity] = 0;
+      });
+    }
+
+    monthlyMap[monthKey][item.Charity.Charity_Name] += 1;
+  });
+
+  // Convert the map into an array for the chart
+  const result: {
+    date: string;
+    "Cancer Research UK": number;
+    Oxfam: number;
+    Mind: number;
+    "Salvation Army": number;
+    "British Heart Foundation": number;
+  }[] = [];
+
+  Object.entries(monthlyMap).forEach(([month, counts]) => {
+    result.push({
+      date: month,
+      "Cancer Research UK": counts["Cancer Research UK"] ?? 0,
+      Oxfam: counts["Oxfam"] ?? 0,
+      Mind: counts["Mind"] ?? 0,
+      "Salvation Army": counts["Salvation Army"] ?? 0,
+      "British Heart Foundation": counts["British Heart Foundation"] ?? 0,
+    });
+  });
+
+  // Optional: sort months ascending
+  result.sort((a, b) => {
+    const [aMonth, aYear] = a.date.split(" ");
+    const [bMonth, bYear] = b.date.split(" ");
+    const aIndex = monthNames.indexOf(aMonth);
+    const bIndex = monthNames.indexOf(bMonth);
+    return Number(aYear) - Number(bYear) || aIndex - bIndex;
+  });
+
+  return result;
+}
+
+
+
 
 

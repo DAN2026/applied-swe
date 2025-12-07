@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { LineChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Line, ResponsiveContainer } from "recharts";
+import React, { useMemo } from "react";
+import { LineChart, XAxis, YAxis, CartesianGrid, Tooltip, Line, ResponsiveContainer } from "recharts";
 
 //#region Types
 
@@ -10,40 +10,38 @@ export type UserChartData = {
   isAnimationActive?: boolean;
 };
 
-type CustomTooltipProps = {
-  active?: boolean;
-  payload?: { dataKey: string; value: number }[];
-  label?: string;
-};
-
-//#endregion
-
-//#region Custom Tooltip
-
-const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-emerald-700/80 text-white p-[1vw] rounded shadow-lg">
-        <p className="font-bold">{label}</p>
-        {payload.map((entry) => (
-          <p key={entry.dataKey}>
-            {entry.dataKey}: {entry.value}
-          </p>
-        ))}
-      </div>
-    );
-  }
-  return null;
-};
-
 //#endregion
 
 const UserLineChart = ({ data, isAnimationActive = true }: UserChartData) => {
 
-  const maxValue = Math.max(...data.map((d) => d.Users));
+  const maxValue = useMemo(() => Math.max(...data.map((d) => d.Users)), [data]);
   const numberOfTicks = 5;
   const tickInterval = Math.ceil(maxValue / numberOfTicks);
-  const ticks = Array.from({ length: numberOfTicks + 1 }, (_, i) => i * tickInterval);
+  const ticks = useMemo(
+    () => Array.from({ length: numberOfTicks + 1 }, (_, i) => i * tickInterval),
+    [numberOfTicks, tickInterval]
+  );
+
+  //#region Custom Tooltip
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+
+    if (!active || !payload || payload.length === 0) return null;
+
+    return (
+      <div className="bg-emerald-700/80 text-white p-3 rounded shadow-lg">
+        <p className="font-bold mb-2">{label}</p>
+        {payload.map((entry: any) => (
+          <div key={entry.dataKey} className="flex flex-row items-baseline">
+            <h1 className="font-semibold text-[0.75vw]">{entry.dataKey}:</h1>
+            <h1 className="ml-2 text-[0.65vw]">{entry.value}</h1>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  //#endregion
 
   return (
     <div className="w-full h-[45vh] max-w-full">

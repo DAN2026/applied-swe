@@ -8,9 +8,9 @@ import StaffDashboard from "@/components/dashboards/StaffDashboard";
 import { useSession } from "next-auth/react";
 import { Role } from "@prisma/client";
 import AdminDashboard from "@/components/dashboards/AdminDashboard";
-import DashboardNavbar from "@/components/general/DashboardSidebar";
-import DashboardTopbar from "@/components/general/DashboardTopbar";
-import { GetTodaysDonationsWithGrowth,GetNewUsersWithGrowth,GetPendingDonationsWithGrowth,GetMonthlyUserCounts } from "@/lib/actions";
+import Topbar from "@/components/general/dashboard/Topbar";
+import Sidebar from "@/components/general/dashboard/Sidebar";
+import { GetTodaysDonationsWithGrowth,GetNewUsersWithGrowth,GetPendingDonationsWithGrowth,GetMonthlyUserCounts,GetDonationCountsByMonth  } from "@/lib/actions";
 
 export default function DashboardSwitcher() {
 
@@ -26,7 +26,8 @@ export default function DashboardSwitcher() {
     donations: StatWithGrowth | null;
     users: StatWithGrowth | null;
     pendingDonations: StatWithGrowth | null;
-    userChartData?: userChartData | null;
+    userChartData?: userChartData | null; 
+    charityMonthlyCounts?: CharityMonthlyCount[] | null;  
   };
 
   type userChartData = {
@@ -40,10 +41,16 @@ export default function DashboardSwitcher() {
     user?: any;  
   };
 
-
+ type CharityMonthlyCount = {
+  date: string;  // "Jan 2026"
+  "Cancer Research UK": number;
+  Oxfam: number;
+  Mind: number;
+  "Salvation Army": number;
+  "British Heart Foundation": number;
+};
 
   //#endregion
-
 
   //#region Use States
 
@@ -53,7 +60,7 @@ export default function DashboardSwitcher() {
 
   //#endregion
 
-//#region Session Management
+  //#region Session Management
 
   const session = useSession().data;
   if (!session){
@@ -75,11 +82,12 @@ export default function DashboardSwitcher() {
     if (!session) return;
     try {
       if (session.user.role === Role.ADMIN) {
-        const [donations, users, pendingDonations,userChartData] = await Promise.all([
+        const [donations, users, pendingDonations,userChartData,charityMonthlyCounts] = await Promise.all([
           GetTodaysDonationsWithGrowth(),
           GetNewUsersWithGrowth(),
           GetPendingDonationsWithGrowth(),
           GetMonthlyUserCounts(),
+          GetDonationCountsByMonth(),
         ]);
 
         setDashboardData({
@@ -87,7 +95,8 @@ export default function DashboardSwitcher() {
             donations,
             users,
             pendingDonations,
-            userChartData: { data: userChartData },         
+            userChartData: { data: userChartData },      
+            charityMonthlyCounts
           },
         });
       }
@@ -101,17 +110,16 @@ export default function DashboardSwitcher() {
 
 //#endregion
 
-
   return (
     <div
     className={`h-full w-full transition-all duration-300 ${
     menuOpen ? "grid grid-cols-[16rem_1fr]" : "grid grid-cols-[0rem_1fr]"
     }`}>
       <div>
-        <DashboardNavbar session={session} tab={tab} setTab={setTab} menuOpen={menuOpen} ></DashboardNavbar>
+        <Sidebar session={session} tab={tab} setTab={setTab} menuOpen={menuOpen} ></Sidebar>
       </div>
       <div className="grid grid-rows-[10%_90%]">
-        <DashboardTopbar session={session} menuOpen={menuOpen} toggleMenu={toggleMenu} tab={tab}></DashboardTopbar>
+        <Topbar session={session} menuOpen={menuOpen} toggleMenu={toggleMenu} tab={tab}></Topbar>
         <Tabs value={tab} onValueChange={setTab} >
           <TabsContent value="user">
             <UserDashboard session={session}/>
@@ -129,6 +137,7 @@ export default function DashboardSwitcher() {
         </Tabs>
       </div>
     </div>
+
 
     // <div className="w-[90vw] h-[100vh]">Test</div>
 

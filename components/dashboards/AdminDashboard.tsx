@@ -5,6 +5,11 @@ import { Gift, Users, Loader, Star, User } from "lucide-react"
 import Card from "../general/Card"
 import UserLineChart from "../general/graphs/UserLineChart"
 import CharityBarChart from "../general/graphs/CharityBarChart"
+import { Dropdown } from "../ui/dashboard/dropdown"
+import { CalendarB } from "../ui/dashboard/calendarB"
+import { getDefaultStartEndDates } from "@/lib/utils"
+
+//#region Types
 
 type StatWithGrowth = {
     today: number | null;
@@ -12,11 +17,19 @@ type StatWithGrowth = {
     growth: number | null;
 };
 
-  type userChartData = {
-    data: { name: string; Users: number }[];
-    isAnimationActive?: boolean;
-  };
+type userChartData = {
+  data: { name: string; Users: number }[];
+  isAnimationActive?: boolean;
+};
 
+type CharityMonthlyCount = {
+  date: string;  // "Jan 2026"
+  "Cancer Research UK": number;
+  Oxfam: number;
+  Mind: number;
+  "Salvation Army": number;
+  "British Heart Foundation": number;
+};
 
 interface AdminDashboardProps {
   session: Session;
@@ -24,25 +37,36 @@ interface AdminDashboardProps {
     donations?: StatWithGrowth | null;
     users?: StatWithGrowth | null;
     pendingDonations?: StatWithGrowth | null;
-    userChartData?:userChartData | null;
-    
+    userChartData?: userChartData | null;
+    charityMonthlyCounts?: CharityMonthlyCount[] | null; // ⭐ NEW FIELD
   } | null;
 }
 
 
-const sampleData = [
-  { name: "Page A", uv: 4000, pv: 2400, amt: 2400 },
-  { name: "Page B", uv: 3000, pv: 1398, amt: 2210 },
-  { name: "Page C", uv: 2000, pv: 9800, amt: 2290 },
-  { name: "Page D", uv: 2780, pv: 3908, amt: 2000 },
-  { name: "Page E", uv: 1890, pv: 4800, amt: 2181 },
-  { name: "Page F", uv: 2390, pv: 3800, amt: 2500 },
-  { name: "Page G", uv: 3490, pv: 4300, amt: 2100 },
-];
+
+//#endregion
+
 
 export default function AdminDashboard({ session,adminData }:AdminDashboardProps ) {
 
+  const defaultDates = getDefaultStartEndDates(); 
+
+  const [startDate, setSqlTimestampStart] = useState<string>(defaultDates[0])
+
+  const [endDate, setSqlTimestampEnd] = useState<string>(defaultDates[1])
+
+  console.log(adminData?.charityMonthlyCounts);
+
+
+  useEffect(() => {
+  console.log("Start Date:", startDate);
+  console.log("End Date:", endDate);
+}, [startDate, endDate]);
+  
+
   return (
+
+
 
     <div className="grid grid-rows-[12%_7.5%_50%] h-screen">
         <div className="flex gap-4">
@@ -72,15 +96,27 @@ export default function AdminDashboard({ session,adminData }:AdminDashboardProps
             />
         </div>
         <div className="flex">
-            <h1 className="w-[50%] ml-10 mt-5 font-semibold text-[0.85vw]">User Overview</h1>
-            <h1 className="w-[50%] mt-5 font-semibold text-3x1">Charity Overview</h1>
+            <div className="w-[50%] grid grid-cols-[80%_20%] items-center">
+              <h1 className="font-semibold text-[0.85vw] ml-10">User Overview</h1>
+              <div className="flex items-center justify-center">
+                <div className="w-6 h-1 bg-emerald-600 rounded-[3] mr-4"></div>
+                <h1 className="text-[0.75vw]">Users</h1>
+              </div>
+            </div>
+            <div className="w-[50%] flex items-center justify-between">
+              <h1 className="w-[50%]  font-semibold text-[0.85vw] ml-10">Charity Overview</h1>
+              <div className="flex flex-row">
+                <CalendarB label="Start Date" setSqlTimestamp={setSqlTimestampStart} dateType="Start Date"></CalendarB>
+                <CalendarB label="End Date" setSqlTimestamp={setSqlTimestampEnd} dateType="End Date"></CalendarB>
+              </div>
+            </div>
         </div>
         <div className=" grid grid-cols-[50%_50%]">
             <div className="flex items-center ml-5 mr-5">
                 <UserLineChart data={adminData?.userChartData?.data ?? []}/>
             </div>
             <div className="flex items-center">
-                <CharityBarChart data={sampleData}></CharityBarChart>
+                <CharityBarChart startDate={startDate} endDate={endDate} data={adminData?.charityMonthlyCounts ?? []}></CharityBarChart>
             </div>
         </div>
         <div className="bg-red-300">
