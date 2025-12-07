@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import {Session} from "next-auth"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import UserDashboard from "@/components/dashboards/UserDashboard";
@@ -10,8 +10,45 @@ import { Role } from "@prisma/client";
 import AdminDashboard from "@/components/dashboards/AdminDashboard";
 import DashboardNavbar from "@/components/general/DashboardSidebar";
 import DashboardTopbar from "@/components/general/DashboardTopbar";
+import { GetTodaysDonationsWithGrowth,GetNewUsersWithGrowth,GetPendingDonationsWithGrowth } from "@/lib/actions";
 
 export default function DashboardSwitcher() {
+
+  //#region Data type
+
+  type StatWithGrowth = {
+      today: number | null;
+      yesterday: number | null;
+      growth: number | null;
+  };
+
+  type AdminData = {
+      donations: StatWithGrowth | null;
+      users: StatWithGrowth | null;
+      pendingDonations: StatWithGrowth | null;
+  };
+
+  type DashboardData = {
+      admin?: AdminData;
+      staff?: any; 
+      user?: any;  
+  };
+
+  //#endregion
+
+
+  //#region Use States
+
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+
+  const [loading, setLoading] = useState(true);
+
+  const [menuOpen, toggleMenu] = useState(true);
+
+  //#endregion
+
+//#region Session Management
+
   const session = useSession().data;
   if (!session){
     return(<></>)
@@ -20,7 +57,44 @@ export default function DashboardSwitcher() {
      session.user.role === Role.STAFF ? "staff" : session.user.role === Role.ADMIN ? "admin":"user"
   );
 
-  const [menuOpen, toggleMenu] = useState(true);
+  //#endregion
+
+  //#region Fetching Dashboard Data
+
+// Im not yet sure whether this will be good practice fetching data here, so it doesnt refetch on navigation w/ the navbar. 
+// If you believe so do data query here n pass down as prop ive not defined the type for the other roles just let them as any.
+
+  useEffect(() => {
+  const fetchDashboardData = async () => {
+    if (!session) return;
+    try {
+      setLoading(true);
+
+      if (session.user.role === Role.ADMIN) {
+        const [donations, users, pendingDonations] = await Promise.all([
+          GetTodaysDonationsWithGrowth(),
+          GetNewUsersWithGrowth(),
+          GetPendingDonationsWithGrowth(),
+        ]);
+
+        setDashboardData({
+          admin: {
+            donations,
+            users,
+            pendingDonations,
+          },
+        });
+      }
+    } catch (err) {
+      console.error("Failed to fetch dashboard data", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchDashboardData();
+}, [session]);
+
+//#endregion
 
 
   return (
@@ -44,7 +118,7 @@ export default function DashboardSwitcher() {
           )}
           {session.user.role === Role.ADMIN && (
             <TabsContent value="admin">
-              <AdminDashboard session={session}/>
+              <AdminDashboard session={session} adminData={dashboardData?.admin}/>
             </TabsContent>
           )}
         </Tabs>

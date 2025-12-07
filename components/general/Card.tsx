@@ -1,20 +1,22 @@
 "use client"
 
 import { LucideIcon } from "lucide-react";
-
+import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
 
 type CardProps = {
   title: string;
-  value: number;
+  value: number | null;
   icon?: LucideIcon;
-  valueGrowth: number;
+  valueGrowth: number | undefined ;
 
 }
 
 export default function Card({title, value,icon: Icon,valueGrowth }:CardProps){
 
-    const valueIncrease = valueGrowth > 0 ? `+${valueGrowth}%`  : valueGrowth != 0 ? `${valueGrowth}%` : `~${valueGrowth}%`;
+
+    const valueIncrease = valueGrowth === undefined ? "Data loading" : valueGrowth > 0 ? `+${valueGrowth}%`  : valueGrowth != 0 ? `${valueGrowth}%` : `~${valueGrowth}%`;
+
 
 
     return(
@@ -26,10 +28,10 @@ export default function Card({title, value,icon: Icon,valueGrowth }:CardProps){
                     </h1>
                 </div>
                 <div className="ml-10 flex items-baseline">
-                    <h1 className="text-4xl">
-                        {value}
+                    <h1 className={value !=null ? "text-4xl font-semibold" : ""}>
+                        {value ?? <LoaderCircle className="mt-5 animate-spin"></LoaderCircle>}
                     </h1>
-                    <h1 className={valueGrowth > 0 ?  // May refactor this later
+                    <h1 className={valueGrowth=== undefined ? "hidden" :  valueGrowth > 0 ?  // May refactor this later
                         "ml-2 text-green-600 font-semibold" 
                         : valueGrowth!=0 ? "ml-2 text-red-600 font-semibold" 
                         : "ml-2 text-orange-600 font-semibold"}>
