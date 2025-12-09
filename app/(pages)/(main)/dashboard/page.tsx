@@ -8,46 +8,60 @@ import StaffDashboard from "@/components/dashboards/StaffDashboard";
 import { useSession } from "next-auth/react";
 import { Role } from "@prisma/client";
 import AdminDashboard from "@/components/dashboards/AdminDashboard";
-import DashboardNavbar from "@/components/general/DashboardSidebar";
-import DashboardTopbar from "@/components/general/DashboardTopbar";
-import { GetTodaysDonationsWithGrowth,GetNewUsersWithGrowth,GetPendingDonationsWithGrowth } from "@/lib/actions";
+import Topbar from "@/components/general/dashboard/Topbar";
+import Sidebar from "@/components/general/dashboard/Sidebar";
+import { GetTodaysDonationsWithGrowth,GetNewUsersWithGrowth,GetPendingDonationsWithGrowth,GetMonthlyUserCounts,GetDonationCountsByMonth,GetAllUsers  } from "@/lib/actions";
 
 export default function DashboardSwitcher() {
 
   //#region Data type
 
   type StatWithGrowth = {
-      today: number | null;
-      yesterday: number | null;
-      growth: number | null;
+    today: number | null;
+    yesterday: number | null;
+    growth: number | null;
   };
 
   type AdminData = {
-      donations: StatWithGrowth | null;
-      users: StatWithGrowth | null;
-      pendingDonations: StatWithGrowth | null;
+    donations: StatWithGrowth | null;
+    users: StatWithGrowth | null;
+    pendingDonations: StatWithGrowth | null;
+    userChartData?: userChartData | null; 
+    charityMonthlyCounts?: CharityMonthlyCount[] | null; 
+    allUsers?: any[];   
+  };
+
+  type userChartData = {
+    data: { name: string; Users: number }[];
+    isAnimationActive?: boolean;
   };
 
   type DashboardData = {
-      admin?: AdminData;
-      staff?: any; 
-      user?: any;  
+    admin?: AdminData;
+    staff?: any; 
+    user?: any;  
   };
 
-  //#endregion
+ type CharityMonthlyCount = {
+  date: string;  // "Jan 2026"
+  "Cancer Research UK": number;
+  Oxfam: number;
+  Mind: number;
+  "Salvation Army": number;
+  "British Heart Foundation": number;
+};
 
+  //#endregion
 
   //#region Use States
 
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
 
-  const [loading, setLoading] = useState(true);
-
   const [menuOpen, toggleMenu] = useState(true);
 
   //#endregion
 
-//#region Session Management
+  //#region Session Management
 
   const session = useSession().data;
   if (!session){
@@ -68,13 +82,14 @@ export default function DashboardSwitcher() {
   const fetchDashboardData = async () => {
     if (!session) return;
     try {
-      setLoading(true);
-
       if (session.user.role === Role.ADMIN) {
-        const [donations, users, pendingDonations] = await Promise.all([
+        const [donations, users, pendingDonations,userChartData,charityMonthlyCounts,allUsers] = await Promise.all([
           GetTodaysDonationsWithGrowth(),
           GetNewUsersWithGrowth(),
           GetPendingDonationsWithGrowth(),
+          GetMonthlyUserCounts(),
+          GetDonationCountsByMonth(),
+          GetAllUsers(),  
         ]);
 
         setDashboardData({
@@ -82,20 +97,26 @@ export default function DashboardSwitcher() {
             donations,
             users,
             pendingDonations,
+            userChartData: { data: userChartData },      
+            charityMonthlyCounts,
+            allUsers 
           },
         });
       }
     } catch (err) {
       console.error("Failed to fetch dashboard data", err);
     } finally {
-      setLoading(false);
     }
   };
   fetchDashboardData();
+
+  const interval = setInterval(fetchDashboardData, 10000);
+
+  return () => clearInterval(interval);
+  
 }, [session]);
 
 //#endregion
-
 
   return (
     <div
@@ -103,10 +124,10 @@ export default function DashboardSwitcher() {
     menuOpen ? "grid grid-cols-[16rem_1fr]" : "grid grid-cols-[0rem_1fr]"
     }`}>
       <div>
-        <DashboardNavbar session={session} tab={tab} setTab={setTab} menuOpen={menuOpen} ></DashboardNavbar>
+        <Sidebar session={session} tab={tab} setTab={setTab} menuOpen={menuOpen} ></Sidebar>
       </div>
       <div className="grid grid-rows-[10%_90%]">
-        <DashboardTopbar session={session} menuOpen={menuOpen} toggleMenu={toggleMenu} tab={tab}></DashboardTopbar>
+        <Topbar session={session} menuOpen={menuOpen} toggleMenu={toggleMenu} tab={tab}></Topbar>
         <Tabs value={tab} onValueChange={setTab} >
           <TabsContent value="user">
             <UserDashboard session={session}/>
@@ -124,6 +145,7 @@ export default function DashboardSwitcher() {
         </Tabs>
       </div>
     </div>
+
 
     // <div className="w-[90vw] h-[100vh]">Test</div>
 
