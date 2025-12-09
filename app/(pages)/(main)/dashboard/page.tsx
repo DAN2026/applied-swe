@@ -10,7 +10,7 @@ import { Role } from "@prisma/client";
 import AdminDashboard from "@/components/dashboards/AdminDashboard";
 import Topbar from "@/components/general/dashboard/Topbar";
 import Sidebar from "@/components/general/dashboard/Sidebar";
-import { GetTodaysDonationsWithGrowth,GetNewUsersWithGrowth,GetPendingDonationsWithGrowth,GetMonthlyUserCounts,GetDonationCountsByMonth  } from "@/lib/actions";
+import { GetTodaysDonationsWithGrowth,GetNewUsersWithGrowth,GetPendingDonationsWithGrowth,GetMonthlyUserCounts,GetDonationCountsByMonth,GetAllUsers  } from "@/lib/actions";
 
 export default function DashboardSwitcher() {
 
@@ -27,7 +27,8 @@ export default function DashboardSwitcher() {
     users: StatWithGrowth | null;
     pendingDonations: StatWithGrowth | null;
     userChartData?: userChartData | null; 
-    charityMonthlyCounts?: CharityMonthlyCount[] | null;  
+    charityMonthlyCounts?: CharityMonthlyCount[] | null; 
+    allUsers?: any[];   
   };
 
   type userChartData = {
@@ -82,12 +83,13 @@ export default function DashboardSwitcher() {
     if (!session) return;
     try {
       if (session.user.role === Role.ADMIN) {
-        const [donations, users, pendingDonations,userChartData,charityMonthlyCounts] = await Promise.all([
+        const [donations, users, pendingDonations,userChartData,charityMonthlyCounts,allUsers] = await Promise.all([
           GetTodaysDonationsWithGrowth(),
           GetNewUsersWithGrowth(),
           GetPendingDonationsWithGrowth(),
           GetMonthlyUserCounts(),
           GetDonationCountsByMonth(),
+          GetAllUsers(),  
         ]);
 
         setDashboardData({
@@ -96,7 +98,8 @@ export default function DashboardSwitcher() {
             users,
             pendingDonations,
             userChartData: { data: userChartData },      
-            charityMonthlyCounts
+            charityMonthlyCounts,
+            allUsers 
           },
         });
       }
@@ -106,6 +109,11 @@ export default function DashboardSwitcher() {
     }
   };
   fetchDashboardData();
+
+  const interval = setInterval(fetchDashboardData, 10000);
+
+  return () => clearInterval(interval);
+  
 }, [session]);
 
 //#endregion

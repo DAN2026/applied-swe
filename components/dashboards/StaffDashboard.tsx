@@ -82,7 +82,7 @@ export default function UserDashboard({session}:{session:Session}) {
           <ButtonGroup value={timePeriod} onChange={setTimePeriod} />
         </div>
         <div className="flex-1 overflow-auto p-2">
-          <DataTable data={filteredDonations} columns={columns} />
+          <DataTable data={filteredDonations} columns={columns}/>
         </div>
       </div>
       </div>
