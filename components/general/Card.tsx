@@ -40,8 +40,8 @@ export default function Card({ title, value, icon: Icon, valueGrowth }: CardProp
                 </div>
             </div>
             <div className="flex items-center justify-center">
-                <div className="bg-emerald-600/75 h-[35%] w-[35%] rounded-[4] flex items-center justify-center">
-                    {Icon && <Icon className="w-[1vw+1vh] h-[1vw+1vh] text-white" />}
+                <div className=" h-[35%] w-[35%] rounded-[4] flex items-center justify-center">
+                    {/* {Icon && <Icon className="w-[1vw+1vh] h-[1vw+1vh] text-white"/>} */}
                 </div>
             </div>
         </div>
