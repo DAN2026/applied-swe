@@ -16,10 +16,11 @@ interface NavbarProps {
   menuOpen?: boolean;
   toggleMenu: (value: boolean) => void;
   tab?:string ;
+  setTab: (tab:string) => void;
 }
 
 
-export default function Topbar({ session,menuOpen,toggleMenu,tab }: NavbarProps){
+export default function Topbar({ setTab,session,menuOpen,toggleMenu,tab }: NavbarProps){
 
     const [inSession, setSessionState] = useState(false);
 
@@ -36,6 +37,7 @@ export default function Topbar({ session,menuOpen,toggleMenu,tab }: NavbarProps)
         "user" : "Dashboard / Personal",
         "staff" : "Dashboard / Charities",
         "admin" : "Dashboard / User Management",
+        "account": "Dashboard / Your Account"
     }
 
     const currentTitle = tab ? tabTitle[tab as keyof typeof tabTitle] : "Dashboard";
@@ -61,7 +63,10 @@ export default function Topbar({ session,menuOpen,toggleMenu,tab }: NavbarProps)
             </div>
             <div className="h-full w-[20%] flex">
                 <div className=" h-full w-[33%] flex items-center justify-center">
-                    <Button className={"h-[80%] w-[80%] text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
+                    <Button onClick={()=>{
+                    setTab("account")} 
+                    }
+                    className={"h-[80%] w-[80%] text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
                         <User className="!h-[2.5vh] !w-[2.5vw]"/>
                     </Button>
                 </div>

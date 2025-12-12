@@ -80,12 +80,11 @@ const DataTable = ({ rowClick, data, columns,selectedID,getRowId }: DataTablePro
       <TableBody>
         {/* REAL ROWS */}
         {visibleRows.map((row) => {
-          console.log(row.original) 
           const rowId = getRowId ? getRowId(row.original) : row.id;
           return (
             <TableRow
               key={row.id}
-              onClick={rowClick ? () => rowClick(row.original) : undefined}
+              onDoubleClick={rowClick ? () => rowClick(row.original) : undefined}
               className={`odd:bg-white even:bg-gray-50 ${
                 rowId.toString() === selectedID?.toString() ? "odd:bg-gradient-to-b from-emerald-600 to-emerald-900 even:bg-gradient-to-b from-emerald-600 to-emerald-900" : ""
               } hover:bg-emerald-100 cursor-pointer transition-all duration-300 `}

@@ -49,6 +49,15 @@ export const authOptions : NextAuthOptions = {
         user.needsOnboarding = true
         return true
       }
+      try{
+        await prisma.user.update({
+          where:{ User_ID: existingUser.User_ID},
+          data:{Last_Active: new Date()}
+        })
+      }
+      catch(err){
+        console.error("Failed to update Last_Active field.")
+      }
       if (existingUser.Role == Role.STAFF){
         const staff = await prisma.staff.findFirst({
         where: {User_ID: existingUser.User_ID as number}

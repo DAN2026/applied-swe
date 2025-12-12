@@ -4,7 +4,6 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import Navbar from "@/components/general/LandingNavbar";
-import DashboardNavbar from "@/components/general/DashboardSidebar";
 
 export default async function RootLayout({
   children,
