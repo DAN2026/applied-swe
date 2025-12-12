@@ -92,8 +92,8 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
 
   const [query, setQuery] = useState("") // The query which is the search from the <Input> component
 
-  const [users, setUsers] = useState<User[]>(adminData?.allUsers ?? []);
-
+  const [users, setUsers] = useState<User[]>(() => adminData?.allUsers ?? []);
+  
   //#endregion
 
   //#region Use Effects
