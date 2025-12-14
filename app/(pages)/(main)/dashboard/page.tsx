@@ -14,6 +14,7 @@ import { GetTodaysDonationsWithGrowth, GetNewUsersWithGrowth, GetPendingDonation
 
 export default function DashboardSwitcher() {
 
+
   //#region Data type
 
   type StatWithGrowth = {
@@ -55,6 +56,8 @@ export default function DashboardSwitcher() {
 
   //#region Use States
 
+  const [windowWidth, setWindowWidth] = useState<number>(0);
+
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
 
   const [menuOpen, toggleMenu] = useState(true);
@@ -70,6 +73,7 @@ export default function DashboardSwitcher() {
   const [tab, setTab] = useState(
     session.user.role === Role.STAFF ? "staff" : session.user.role === Role.ADMIN ? "admin" : "user"
   );
+
 
   //#endregion
 
@@ -118,12 +122,40 @@ export default function DashboardSwitcher() {
 
   //#endregion
 
-  return (
+  //#region Navbar logic
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    handleResize(); // initial value
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (windowWidth >= 1440) {
+      toggleMenu(true);
+    } else {
+      toggleMenu(false);
+    }
+  }, [windowWidth]);
+
+
+
+  //#endregion
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    handleResize(); // initial value
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+
+  const desktopDisplay = windowWidth > 1440 ? (
     <div
-      className={`h-full w-full transition-all duration-300 ${menuOpen ? "grid grid-cols-[16rem_1fr]" : "grid grid-cols-[0rem_1fr]"
-        }`}>
+      className={`h-full w-full transition-all duration-300 ${menuOpen ? "grid grid-cols-[16rem_1fr]" : "grid grid-cols-[0rem_1fr]"}`}>
       <div>
-        <Sidebar session={session} tab={tab} setTab={setTab} menuOpen={menuOpen} ></Sidebar>
+        <Sidebar session={session} tab={tab} setTab={setTab} menuOpen={menuOpen} toggleMenu={toggleMenu}></Sidebar>
       </div>
       <div className="grid grid-rows-[10%_90%]">
         <Topbar session={session} menuOpen={menuOpen} toggleMenu={toggleMenu} tab={tab}></Topbar>
@@ -144,24 +176,51 @@ export default function DashboardSwitcher() {
         </Tabs>
       </div>
     </div>
+  ) : null;
+
+  const laptopDisplay = windowWidth < 1440 ? (
+    <div
+      className={`h-full w-full transition-all duration-300`}>
+      <div>
+        <Sidebar session={session} tab={tab} setTab={setTab} menuOpen={menuOpen} toggleMenu={toggleMenu} ></Sidebar>
+      </div>
+      <div className="grid grid-rows-[10%_90%]">
+        <Topbar session={session} menuOpen={menuOpen} toggleMenu={toggleMenu} tab={tab}></Topbar>
+        <Tabs value={tab} onValueChange={setTab} >
+          <TabsContent value="user">
+            <UserDashboard session={session} />
+          </TabsContent>
+          {session.user.role === Role.STAFF || Role.ADMIN && (
+            <TabsContent value="staff">
+              <StaffDashboard session={session} />
+            </TabsContent>
+          )}
+          {session.user.role === Role.ADMIN && (
+            <TabsContent value="admin">
+              <AdminDashboard session={session} adminData={dashboardData?.admin} />
+            </TabsContent>
+          )}
+        </Tabs>
+      </div>
+    </div>
+  ) : null;
 
 
-    // <div className="w-[90vw] h-[100vh]">Test</div>
+  return (
 
+  <div className="relative h-full w-full">
+    
+    {menuOpen && windowWidth < 1440 && (
+      <div
+        className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+        onClick={() => toggleMenu(false)}
+      />
+    )}
 
-    //  div>
-    //   <DashboardNavbar session={session} tab={tab} setTab={setTab}></DashboardNavbar>
-    // </div> 
+    {desktopDisplay}
+    {laptopDisplay}
 
-    /* {session.user.role !== Role.USER && (<>
-//   <TabsList className="w-1/2 mx-auto mb-[2vh]">
-//     <TabsTrigger value="user" className="py-5 text-lg font-semibold tracking-wide data-[state=active]:bg-emerald-700/80 data-[state=active]:text-white transition-colors">Your Donations</TabsTrigger>
-//     {session.user.role === Role.STAFF &&
-//       <TabsTrigger value="staff" className="py-5 text-lg font-semibold tracking-wide data-[state=active]:bg-emerald-700/80 data-[state=active]:text-white transition-colors">All Donations</TabsTrigger>}
-//     {session.user.role === Role.ADMIN &&
-//       <TabsTrigger value="admin" className="py-5 text-lg font-semibold tracking-wide data-[state=active]:bg-emerald-700/80 data-[state=active]:text-white transition-colors">Admin Functions</TabsTrigger>}
-//   </TabsList>
-//   <div className="bg-emerald-700/80 w-full mb-[3vh] h-[0.5vh]"/>
-//   </>)} */
+  </div>
+
   );
 }

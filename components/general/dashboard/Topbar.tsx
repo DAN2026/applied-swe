@@ -2,24 +2,24 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import {signOut} from "next-auth/react"
+import { signOut } from "next-auth/react"
 import { Session } from "next-auth"
 import { Role } from "@prisma/client"
-import { useState,useEffect } from "react"
+import { useState, useEffect } from "react"
 import { icons, LucideX } from "lucide-react";
 import { LucideMenu } from "lucide-react";
-import { UserRound, Users, Clipboard, LogOut,Settings,User } from "lucide-react"
+import { UserRound, Users, Clipboard, LogOut, Settings, User } from "lucide-react"
 
 
 interface NavbarProps {
-  session: Session | null;
-  menuOpen?: boolean;
-  toggleMenu: (value: boolean) => void;
-  tab?:string ;
+    session: Session | null;
+    menuOpen?: boolean;
+    toggleMenu: (value: boolean) => void;
+    tab?: string;
 }
 
 
-export default function Topbar({ session,menuOpen,toggleMenu,tab }: NavbarProps){
+export default function Topbar({ session, menuOpen, toggleMenu, tab }: NavbarProps) {
 
     const [inSession, setSessionState] = useState(false);
 
@@ -30,12 +30,12 @@ export default function Topbar({ session,menuOpen,toggleMenu,tab }: NavbarProps)
     const mobileDisplay = (
         <nav>
         </nav>
-    ); 
+    );
 
     const tabTitle = {
-        "user" : "Dashboard / Personal",
-        "staff" : "Dashboard / Charities",
-        "admin" : "Dashboard / User Management",
+        "user": "Dashboard / Personal",
+        "staff": "Dashboard / Charities",
+        "admin": "Dashboard / User Management",
     }
 
     const currentTitle = tab ? tabTitle[tab as keyof typeof tabTitle] : "Dashboard";
@@ -45,13 +45,13 @@ export default function Topbar({ session,menuOpen,toggleMenu,tab }: NavbarProps)
             <div className="h-full w-[100%] flex">
                 <div className="h-full w-[7.5%] flex items-center justify-center">
                     <Button
-                    className={
-                    `h-[50%] w-[40%] rounded-[8] text-black bg-transparent transition-transform duration-300
+                        className={
+                            `h-[50%] w-[40%] rounded-[8] text-black bg-transparent transition-transform duration-300
                     hover:bg-black/30 transition-all duration-300
                     ${menuOpen ? "rotate-0" : "rotate-90"}`}
-                    onClick={()=>toggleMenu(!menuOpen)}>
-                        <LucideMenu className="!h-[25] !w-[25]" /> 
-                    </Button>   
+                        onClick={() => toggleMenu(!menuOpen)}>
+                        <LucideMenu className="!h-[25] !w-[25]" />
+                    </Button>
                 </div>
                 <div className="h-full w-[40%] flex items-center">
                     <h1 className="text-lg font-semibold">
@@ -61,8 +61,8 @@ export default function Topbar({ session,menuOpen,toggleMenu,tab }: NavbarProps)
             </div>
             <div className="h-full w-[20%] flex">
                 <div className=" h-full w-[33%] flex items-center justify-center">
-                    <Button className={"h-[80%] w-[80%] text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
-                        <User className="!h-[2.5vh] !w-[2.5vw]"/>
+                    <Button className={"h-[40%] w-[40%] text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
+                        <User className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 xl:h-9 xl:w-9" />
                     </Button>
                 </div>
                 <div className=" h-full w-[67%] flex items-center">
@@ -72,11 +72,11 @@ export default function Topbar({ session,menuOpen,toggleMenu,tab }: NavbarProps)
                 </div>
             </div>
         </nav>
-  );
-    return(
-      <div>
-          {/* {mobileDisplay} */}
-          {desktopDisplay}
-      </div>
+    );
+    return (
+        <div>
+            {/* {mobileDisplay} */}
+            {desktopDisplay}
+        </div>
     )
 }

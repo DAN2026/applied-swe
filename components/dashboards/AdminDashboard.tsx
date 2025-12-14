@@ -76,10 +76,6 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
     { label: "Postcode", key: "Postcode" },
   ];
 
-
-
-
-
   //#region Use States
 
   const [startDate, setSqlTimestampStart] = useState<string>(defaultDates[0]) // For the calendar Component
@@ -93,7 +89,9 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
   const [query, setQuery] = useState("") // The query which is the search from the <Input> component
 
   const [users, setUsers] = useState<User[]>(() => adminData?.allUsers ?? []);
-  
+
+  const [windowWidth, setWindowWidth] = useState(0);
+
   //#endregion
 
   //#region Use Effects
@@ -116,6 +114,16 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
       setUsers(adminData.allUsers);
     }
   }, [adminData?.allUsers]);
+
+
+  // We are tracking the window size so we can display the correct component
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    handleResize(); // initial value
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
 
   //#endregion
@@ -468,81 +476,166 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
 
   //#endregion
 
-  return (
-    <div className="grid grid-rows-[12%_7.5%_50%_50%] h-screen">
-      <div className="flex gap-4">
-        <Card
-          title="Today's Donations"
-          icon={Gift}
-          value={adminData?.donations?.today ?? null}
-          valueGrowth={adminData?.donations?.growth ?? undefined}
-        />
-        <Card
-          title="Today's Users"
-          icon={Users}
-          value={adminData?.users?.today ?? null}
-          valueGrowth={adminData?.users?.growth ?? undefined}
-        />
-        <Card
-          title="Pending Donations"
-          icon={Loader}
-          value={adminData?.pendingDonations?.today ?? null}
-          valueGrowth={adminData?.pendingDonations?.growth ?? undefined}
-        />
-        <Card
-          title="New Users"
-          icon={Star}
-          value={adminData?.users?.today ?? null}
-          valueGrowth={adminData?.users?.growth ?? undefined}
-        />
-      </div>
-      <div className="flex">
-        <div className="w-[50%] grid grid-cols-[80%_20%] items-center">
-          <h1 className="font-semibold text-[0.85vw] ml-10">User Overview</h1>
-          <div className="flex items-center justify-center">
-            <div className="w-6 h-1 bg-emerald-600 rounded-[3] mr-4"></div>
-            <h1 className="text-[0.75vw]">Users</h1>
+  //#region Desktop View
+
+  const desktopDisplay = windowWidth > 1440 ?(
+    <div className="w-full">
+      <div className="grid grid-rows-[min-content_min-content_1fr_1fr] h-screen">
+        <div className="grid grid-cols-[25%_25%_25%_25%]">
+          <Card
+            title="Today's Donations"
+            icon={Gift}
+            value={adminData?.donations?.today ?? null}
+            valueGrowth={adminData?.donations?.growth ?? undefined}
+          />
+          <Card
+            title="Today's Users"
+            icon={Users}
+            value={adminData?.users?.today ?? null}
+            valueGrowth={adminData?.users?.growth ?? undefined}
+          />
+          <Card
+            title="Pending Donos"
+            icon={Loader}
+            value={adminData?.pendingDonations?.today ?? null}
+            valueGrowth={adminData?.pendingDonations?.growth ?? undefined}
+          />
+          <Card
+            title="New Users"
+            icon={Star}
+            value={adminData?.users?.today ?? null}
+            valueGrowth={adminData?.users?.growth ?? undefined}
+          />
+        </div>
+        <div className="flex flex-wrap gap-6 px-10 py-4 min-h-[50px]">
+          <div className="flex-1 min-w-[250px] grid grid-cols-[3fr_1fr] items-center gap-4">
+            <h1 className="font-semibold text-sm lg:text-base">User Overview</h1>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-1 bg-emerald-600 rounded mr-2"></div>
+              <h1 className="text-xs lg:text-sm">Users</h1>
+            </div>
+          </div>
+          <div className="flex-1 min-w-[250px] items-center flex justify-between gap-4">
+            <h1 className="font-semibold text-sm lg:text-base">Charity Overview</h1>
+            <div className="flex gap-2">
+              <CalendarB label="Start Date" setSqlTimestamp={setSqlTimestampStart} dateType="Start Date" />
+              <CalendarB label="End Date" setSqlTimestamp={setSqlTimestampEnd} dateType="End Date" />
+            </div>
           </div>
         </div>
-        <div className="w-[50%] flex items-center justify-between">
-          <h1 className="w-[50%]  font-semibold text-[0.85vw] ml-10">Charity Overview</h1>
-          <div className="flex flex-row">
-            <CalendarB label="Start Date" setSqlTimestamp={setSqlTimestampStart} dateType="Start Date"></CalendarB>
-            <CalendarB label="End Date" setSqlTimestamp={setSqlTimestampEnd} dateType="End Date"></CalendarB>
+        <div className=" grid grid-cols-[50%_50%] min-h-[400px]">
+          <div className="flex items-center ml-5 mr-5">
+            <UserLineChart data={adminData?.userChartData?.data ?? []} />
+          </div>
+          <div className="flex items-center">
+            <CharityBarChart startDate={startDate} endDate={endDate} data={adminData?.charityMonthlyCounts ?? []}></CharityBarChart>
           </div>
         </div>
-      </div>
-      <div className=" grid grid-cols-[50%_50%]">
-        <div className="flex items-center ml-5 mr-5">
-          <UserLineChart data={adminData?.userChartData?.data ?? []} />
-        </div>
-        <div className="flex items-center">
-          <CharityBarChart startDate={startDate} endDate={endDate} data={adminData?.charityMonthlyCounts ?? []}></CharityBarChart>
-        </div>
-      </div>
-      <div className="">
-        <div className="grid grid-rows-[10%_90%] overflow-hidden">
-          <div className="flex items-center ">
-            <h1 className="ml-10 text-[0.85vw] font-semibold">User Table</h1>
-          </div>
-          <div className="grid grid-rows-[15%_85%] overflow-hidden">
-            <div className="grid grid-cols-[50%_50%] ml-10 mr-10">
-              <div className="flex items-center">
+        <div className="">
+          <div className="overflow-hidden">
+            <div className=" ml-10 flex items-center ">
+              <h1 className="font-semibold text-sm lg:text-base">User Table</h1>
+            </div>
+            <div className="ml-10">
+              <div className="flex items-center mt-2 mb-2">
                 <Input placeholder="Search for a username..." value={query} onChange={(e) => setQuery(e.target.value)} className="max-w-sm" />
-                <Button className="ml-6 text-[90%] w-[15%] bg-red-300 hover:bg-black/30">Delete</Button>
               </div>
-              <div className="flex items-center">
-                {/* <h1>Current Role</h1> */}
+              <div className="flex-1 overflow-scroll mr-10">
+                <DataTable data={filteredUsers} columns={userColumns} rowClick={handleRowClick} selectedID={selectedID} getRowId={(row) => row.User_ID} />
               </div>
             </div>
-            <div className="ml-10 flex-1 overflow-auto p-2 mr-10">
-              <DataTable data={filteredUsers} columns={userColumns} rowClick={handleRowClick} selectedID={selectedID} getRowId={(row) => row.User_ID} />
+          </div>
+          <div className="grid grid-rows-[10%_90%]">
+          </div>
+        </div>
+      </div>
+    </div>
+  ) : null;
+
+
+  //#endregion
+
+  const laptopDisplay = windowWidth >= 1024 && windowWidth < 1440 ? (
+    <div className="w-full h-[900px]">
+      <div className="grid grid-rows-[min-content_min-content_1fr_1fr] h-screen">
+        <div className="grid grid-cols-[25%_25%_25%_25%]">
+          <Card
+            title="Today's Donations"
+            icon={Gift}
+            value={adminData?.donations?.today ?? null}
+            valueGrowth={adminData?.donations?.growth ?? undefined}
+          />
+          <Card
+            title="Today's Users"
+            icon={Users}
+            value={adminData?.users?.today ?? null}
+            valueGrowth={adminData?.users?.growth ?? undefined}
+          />
+          <Card
+            title="Pending Donos"
+            icon={Loader}
+            value={adminData?.pendingDonations?.today ?? null}
+            valueGrowth={adminData?.pendingDonations?.growth ?? undefined}
+          />
+          <Card
+            title="New Users"
+            icon={Star}
+            value={adminData?.users?.today ?? null}
+            valueGrowth={adminData?.users?.growth ?? undefined}
+          />
+        </div>
+        <div className="flex flex-wrap gap-6 px-10 py-4 min-h-[50px]">
+          <div className="flex-1 min-w-[250px] grid grid-cols-[3fr_1fr] items-center gap-4">
+            <h1 className="font-semibold text-sm lg:text-base">User Overview</h1>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-1 bg-emerald-600 rounded mr-2"></div>
+              <h1 className="text-xs lg:text-sm">Users</h1>
+            </div>
+          </div>
+          <div className="flex-1 min-w-[250px] items-center flex justify-between gap-4">
+            <h1 className="font-semibold text-sm lg:text-base">Charity Overview</h1>
+            <div className="flex gap-2">
+              <CalendarB label="Start Date" setSqlTimestamp={setSqlTimestampStart} dateType="Start Date" />
+              <CalendarB label="End Date" setSqlTimestamp={setSqlTimestampEnd} dateType="End Date" />
             </div>
           </div>
         </div>
-        <div className="grid grid-rows-[10%_90%]  ">
+        <div className=" grid grid-cols-[50%_50%] min-h-[400px]">
+          <div className="flex items-center ml-5 mr-5">
+            <UserLineChart data={adminData?.userChartData?.data ?? []} />
+          </div>
+          <div className="flex items-center">
+            <CharityBarChart startDate={startDate} endDate={endDate} data={adminData?.charityMonthlyCounts ?? []}></CharityBarChart>
+          </div>
+        </div>
+        <div className="">
+          <div className="overflow-hidden">
+            <div className=" ml-10 flex items-center ">
+              <h1 className="font-semibold text-sm lg:text-base">User Table</h1>
+            </div>
+            <div className="ml-10">
+              <div className="flex items-center mt-2 mb-2">
+                <Input placeholder="Search for a username..." value={query} onChange={(e) => setQuery(e.target.value)} className="max-w-sm" />
+              </div>
+              <div className="flex-1 overflow-scroll   mr-10">
+                <DataTable data={filteredUsers} columns={userColumns} rowClick={handleRowClick} selectedID={selectedID} getRowId={(row) => row.User_ID} />
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-rows-[10%_90%]">
+          </div>
         </div>
       </div>
+    </div>
+  ) : null;
+
+
+
+
+  return (
+    <div>
+      {desktopDisplay}
+      {laptopDisplay}
     </div>
   )
 }
