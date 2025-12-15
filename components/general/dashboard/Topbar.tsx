@@ -33,7 +33,6 @@ export default function Topbar({ setTab,session,menuOpen,toggleMenu,tab }: Navba
         "account": "Dashboard / Your Account"
     }
 
-    const currentTitle = tab ? tabTitle[tab as keyof typeof tabTitle] : "Dashboard";
     useEffect(() => {
         setSessionState(session != null);
     }, [session]);
