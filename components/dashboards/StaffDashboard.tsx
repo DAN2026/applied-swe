@@ -10,7 +10,7 @@ import { Session } from "next-auth"
 import ViewDonation from "./modals/ViewDonation"
 import { approveDonation, sendForResubmit } from "@/app/(pages)/(main)/dashboard/actions"
 
-function useDonations(session:Session) {
+function useDonations(session: Session) {
   const [donations, setDonations] = useState<Items[]>([])
   useEffect(() => {
     const fetch = async () => {
@@ -22,7 +22,7 @@ function useDonations(session:Session) {
   return donations
 }
 
-export default function UserDashboard({session}:{session:Session}) {
+export default function UserDashboard({ session }: { session: Session }) {
   const donations = useDonations(session)
   const [timePeriod, setTimePeriod] = useState("All Time")
   const [modal, setModal] = useState<ReactElement | null>(null)
@@ -45,7 +45,7 @@ export default function UserDashboard({session}:{session:Session}) {
   }, [donations, timePeriod])
 
   const columns: ColumnDef<Items>[] = useMemo(() => [
-    { accessorKey: "Donor_ID", header: "Donor ID"},
+    { accessorKey: "Donor_ID", header: "Donor ID" },
     { accessorKey: "Item_Name", header: "Name", enableSorting: true },
     { accessorKey: "Brand", header: "Brand", enableSorting: true },
     {
@@ -61,14 +61,14 @@ export default function UserDashboard({session}:{session:Session}) {
       accessorKey: "Status",
       header: "Status",
       enableSorting: true,
-      cell: ({row}) => {
+      cell: ({ row }) => {
         const statusText = {
-          [DonationStatus.Distributed]:"text-green-700 font-semibold",
-          [DonationStatus.Collected]:"text-green-700 font-semibold",
-          [DonationStatus.Approved]:"text-green-500 font-semibold",
-          [DonationStatus.Pending]:"text-orange-500 font-semibold",
-          [DonationStatus.Rejected]:"text-red-500 font-semibold"
-      }
+          [DonationStatus.Distributed]: "text-green-700 font-semibold",
+          [DonationStatus.Collected]: "text-green-700 font-semibold",
+          [DonationStatus.Approved]: "text-green-500 font-semibold",
+          [DonationStatus.Pending]: "text-orange-500 font-semibold",
+          [DonationStatus.Rejected]: "text-red-500 font-semibold"
+        }
         const status = row.getValue("Status") as DonationStatus
         return <span className={statusText[status]}>
           {status}
@@ -88,6 +88,6 @@ export default function UserDashboard({session}:{session:Session}) {
           <DataTable rowClick={(item:Items)=>setModal(<ViewDonation onClose={()=>setModal(null)} item={item} onApprove={approveDonation} onSendForReview={sendForResubmit}/>)} data={filteredDonations} columns={columns} />
         </div>
       </div>
-      </div>
+    </div>
   )
 }

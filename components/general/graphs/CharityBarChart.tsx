@@ -24,11 +24,11 @@ type CharityBarChartProps = {
 //#region UI
 
 const colors = {
-  Oxfam: "#6ee7b7",         
-  "Cancer Research UK": "#34d399", 
-  Mind: "#10b981",             
-  "Salvation Army": "#059669",  
-  "British Heart Foundation": "#047857", 
+  Oxfam: "#6ee7b7",
+  "Cancer Research UK": "#34d399",
+  Mind: "#10b981",
+  "Salvation Army": "#059669",
+  "British Heart Foundation": "#047857",
 } as const;
 
 type Charity = keyof typeof colors;
@@ -71,13 +71,13 @@ const CharityBarChart = ({ startDate, endDate, data }: CharityBarChartProps) => 
 
     return (
       <div className="bg-emerald-700/80 text-white p-3 rounded shadow-lg">
-        <p className="font-bold mb-2 text-white text-[0.85vw]">{label} (Donations)</p>
+        <p className="font-semibold mb-2 text-white text-sm lg:text-base">{label} (Donations)</p>
         {payload.map((entry: any) => {
           const charity = entry.dataKey as Charity;
           return (
             <div key={charity} className="flex flex-row items-baseline">
-              <h1 className="font-semibold text-[0.75vw]">{charity}:</h1>
-              <h1 className="ml-2 text-[0.65vw]">{entry.value}</h1>
+              <h1 className="font-semibold text-sm lg:text-base">{charity}:</h1>
+              <h1 className="ml-2 text-sm lg:text-base">{entry.value}</h1>
             </div>
           );
         })}
@@ -97,16 +97,16 @@ const CharityBarChart = ({ startDate, endDate, data }: CharityBarChartProps) => 
         width={width}
         height={height}
         style={{
-          fill: "rgba(0, 0, 0, 0.05)", 
-          transition: "all 0.3s",  
+          fill: "rgba(0, 0, 0, 0.05)",
+          transition: "all 0.3s",
         }}
       />
     );
   };
-//#endregion
+  //#endregion
 
   return (
-    <div className="w-full h-[45vh] max-w-full">
+    <div className="w-full h-[90%] max-w-full">
       <ResponsiveContainer width="95%" height="100%">
         <BarChart
           data={filteredData}
@@ -115,7 +115,7 @@ const CharityBarChart = ({ startDate, endDate, data }: CharityBarChartProps) => 
         >
           <XAxis dataKey="date" />
           <YAxis />
-<         Tooltip content={<CustomTooltip />} cursor={<CustomCursor />} />
+          <         Tooltip content={<CustomTooltip />} cursor={<CustomCursor />} />
           {(Object.keys(colors) as Charity[]).map(charity => (
             <Bar key={charity} dataKey={charity} fill={colors[charity]} />
           ))}

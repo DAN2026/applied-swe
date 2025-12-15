@@ -29,12 +29,12 @@ const UserLineChart = ({ data, isAnimationActive = true }: UserChartData) => {
     if (!active || !payload || payload.length === 0) return null;
 
     return (
-      <div className="bg-emerald-700/80 text-white p-3 rounded shadow-lg">
-        <p className="font-bold mb-2">{label}</p>
+      <div className="bg-emerald-700/80 text-white p-3 rounded shadow-lg ">
+        <p className="font-bold mb-2 text-sm lg:text-base">{label}</p>
         {payload.map((entry: any) => (
           <div key={entry.dataKey} className="flex flex-row items-baseline">
-            <h1 className="font-semibold text-[0.75vw]">{entry.dataKey}:</h1>
-            <h1 className="ml-2 text-[0.65vw]">{entry.value}</h1>
+            <h1 className="font-semibold text-sm lg:text-base">{entry.dataKey}:</h1>
+            <h1 className="ml-2 text-sm lg:text-base">{entry.value}</h1>
           </div>
         ))}
       </div>
@@ -44,7 +44,7 @@ const UserLineChart = ({ data, isAnimationActive = true }: UserChartData) => {
   //#endregion
 
   return (
-    <div className="w-full h-[45vh] max-w-full">
+    <div className="w-full h-[88%] max-w-full"> {/* Seems odd but for some reason the svg of line chart is just slightly smaller */}
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
           <XAxis dataKey="name" stroke="black" />
