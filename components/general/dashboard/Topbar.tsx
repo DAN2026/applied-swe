@@ -27,9 +27,10 @@ export default function Topbar({ setTab,session,menuOpen,toggleMenu,tab }: Navba
     const [windowWidth, setWindowWidth] = useState(0);
 
     const tabTitle = {
-        "user": "Dashboard / Personal",
-        "staff": "Dashboard / Charities",
-        "admin": "Dashboard / User Management",
+        "user" : "Dashboard / Personal",
+        "staff" : "Dashboard / Charities",
+        "admin" : "Dashboard / User Management",
+        "account": "Dashboard / Your Account"
     }
 
     const currentTitle = tab ? tabTitle[tab as keyof typeof tabTitle] : "Dashboard";
@@ -82,12 +83,7 @@ export default function Topbar({ setTab,session,menuOpen,toggleMenu,tab }: Navba
     ) : null;
 
 
-    const tabTitle = {
-        "user" : "Dashboard / Personal",
-        "staff" : "Dashboard / Charities",
-        "admin" : "Dashboard / User Management",
-        "account": "Dashboard / Your Account"
-    }
+
 
     const desktopDisplay = windowWidth > 1000 ? (
         <nav className="bg-white h-[100px] flex flex-row justify-between">
@@ -111,7 +107,7 @@ export default function Topbar({ setTab,session,menuOpen,toggleMenu,tab }: Navba
                     <Button onClick={()=>{
                     setTab("account")} 
                     }
-                    className={"text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250""}>
+                    className={"text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
                         <User className=""/>
                     </Button>
                 </div>

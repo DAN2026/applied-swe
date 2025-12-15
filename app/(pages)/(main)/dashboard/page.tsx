@@ -159,7 +159,7 @@ export default function DashboardSwitcher() {
         <Sidebar session={session} tab={tab} setTab={setTab} menuOpen={menuOpen} toggleMenu={toggleMenu}></Sidebar>
       </div>
       <div className="grid grid-rows-[10%_90%]">
-        <Topbar session={session} menuOpen={menuOpen} toggleMenu={toggleMenu} tab={tab}></Topbar>
+        <Topbar session={session} menuOpen={menuOpen} toggleMenu={toggleMenu} tab={tab} setTab={setTab}></Topbar>
         <Tabs value={tab} onValueChange={setTab} >
           <TabsContent value="user">
             <UserDashboard session={session} />
@@ -186,7 +186,7 @@ export default function DashboardSwitcher() {
         <Sidebar session={session} tab={tab} setTab={setTab} menuOpen={menuOpen} toggleMenu={toggleMenu} ></Sidebar>
       </div>
       <div className="grid grid-rows-[auto_1fr]">
-        <Topbar session={session} menuOpen={menuOpen} toggleMenu={toggleMenu} tab={tab}></Topbar>
+        <Topbar session={session} menuOpen={menuOpen} toggleMenu={toggleMenu} tab={tab} setTab={setTab}></Topbar>
         <Tabs value={tab} onValueChange={setTab} >
           <TabsContent value="user">
             <UserDashboard session={session} />
