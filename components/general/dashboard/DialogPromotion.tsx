@@ -8,9 +8,9 @@ import { DialogHeader } from "@/components/ui/dialog";
 import { DialogTitle } from "@/components/ui/dialog";
 import { DialogTrigger } from "@/components/ui/dialog";
 import { User, Role } from "@prisma/client";
-import { UpdateUserRole } from "@/lib/actions";
-import { DropdownCharity } from "./DropdownCharity";
 import { DropdownPromotion } from "./DropdownPromotion";
+import { DropdownCharity } from "./DropdownCharity";
+import { UpdateUserRole } from "@/lib/actions";
 
 interface DialogPromotionProps {
   user: User | null;

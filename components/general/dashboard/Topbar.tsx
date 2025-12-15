@@ -16,11 +16,10 @@ interface NavbarProps {
     menuOpen?: boolean;
     toggleMenu: (value: boolean) => void;
     tab?: string;
-    setTab: (tab: string) => void;
 }
 
 
-export default function Topbar({ setTab, session, menuOpen, toggleMenu, tab }: NavbarProps) {
+export default function Topbar({ session, menuOpen, toggleMenu, tab }: NavbarProps) {
 
     const [inSession, setSessionState] = useState(false);
 
@@ -30,15 +29,24 @@ export default function Topbar({ setTab, session, menuOpen, toggleMenu, tab }: N
         "user": "Dashboard / Personal",
         "staff": "Dashboard / Charities",
         "admin": "Dashboard / User Management",
-        "account": "Dashboard / Your Account"
     }
+
+    const currentTitle = tab ? tabTitle[tab as keyof typeof tabTitle] : "Dashboard";
+
 
     useEffect(() => {
         setSessionState(session != null);
     }, [session]);
 
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        handleResize(); // initial value
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
-    const currentTitle = tab ? tabTitle[tab as keyof typeof tabTitle] : "Dashboard";
+
+
 
     const mobileDisplay = windowWidth < 1000 ? (
         <nav className="bg-white h-[100px] flex flex-row justify-between">
@@ -59,12 +67,8 @@ export default function Topbar({ setTab, session, menuOpen, toggleMenu, tab }: N
             </div>
             <div className="h-full w-[30%] flex">
                 <div className=" h-full w-[33%] flex items-center justify-center">
-                    <Button
-                        className={"text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}
-                        onClick={() => {
-                            setTab("account")
-                        }}>
-                        <User className="" />
+                    <Button className={"text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
+                        <User className=""/>
                     </Button>
                 </div>
                 <div className=" h-full w-[67%] flex items-center">
@@ -79,17 +83,15 @@ export default function Topbar({ setTab, session, menuOpen, toggleMenu, tab }: N
 
 
 
-    const desktopDisplay = (
-        <nav className="bg-white h-full flex flex-row justify-between">
+    const desktopDisplay = windowWidth > 1000 ? (
+        <nav className="bg-white h-[100px] flex flex-row justify-between">
             <div className="h-full w-[100%] flex">
                 <div className="h-full w-[7.5%] flex items-center justify-center">
                     <Button
-                        className={
-                            `h-[50%] w-[40%] rounded-[8] text-black bg-transparent transition-transform duration-300
-                    hover:bg-black/30 transition-all duration-300
-                    ${menuOpen ? "rotate-0" : "rotate-90"}`}
+                        className={`rounded-[8] text-black bg-transparent  hover:bg-black/30 transition-all duration-300
+                        ${menuOpen ? "rotate-0" : "rotate-90"}`}
                         onClick={() => toggleMenu(!menuOpen)}>
-                        <LucideMenu className="!h-[25] !w-[25]" />
+                        <LucideMenu className="" />
                     </Button>
                 </div>
                 <div className="h-full w-[40%] flex items-center">
@@ -100,12 +102,8 @@ export default function Topbar({ setTab, session, menuOpen, toggleMenu, tab }: N
             </div>
             <div className="h-full w-[20%] flex">
                 <div className=" h-full w-[33%] flex items-center justify-center">
-                    <Button onClick={() => {
-                        setTab("account")
-                    }
-                    }
-                        className={"text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
-                        <User className="" />
+                    <Button className={"text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
+                        <User className=""/>
                     </Button>
                 </div>
                 <div className=" h-full w-[67%] flex items-center">
@@ -115,11 +113,11 @@ export default function Topbar({ setTab, session, menuOpen, toggleMenu, tab }: N
                 </div>
             </div>
         </nav>
-    );
+    ) : null;
 
     return (
         <div>
-            {/* {mobileDisplay} */}
+            {mobileDisplay}
             {desktopDisplay}
         </div>
     )
