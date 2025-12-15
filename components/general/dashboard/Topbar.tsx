@@ -15,11 +15,12 @@ interface NavbarProps {
     session: Session | null;
     menuOpen?: boolean;
     toggleMenu: (value: boolean) => void;
+    setTab: (value: string) => void;
     tab?: string;
 }
 
 
-export default function Topbar({ session, menuOpen, toggleMenu, tab }: NavbarProps) {
+export default function Topbar({ session, menuOpen, toggleMenu, tab, setTab }: NavbarProps) {
 
     const [inSession, setSessionState] = useState(false);
 
@@ -67,8 +68,8 @@ export default function Topbar({ session, menuOpen, toggleMenu, tab }: NavbarPro
             </div>
             <div className="h-full w-[30%] flex">
                 <div className=" h-full w-[33%] flex items-center justify-center">
-                    <Button className={"text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
-                        <User className=""/>
+                    <Button className={"text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"} onClick={()=>setTab("account")}>
+                        <User className="" />
                     </Button>
                 </div>
                 <div className=" h-full w-[67%] flex items-center">
@@ -102,8 +103,8 @@ export default function Topbar({ session, menuOpen, toggleMenu, tab }: NavbarPro
             </div>
             <div className="h-full w-[20%] flex">
                 <div className=" h-full w-[33%] flex items-center justify-center">
-                    <Button className={"text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
-                        <User className=""/>
+                    <Button className={"text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"} onClick={() => setTab?.("account")}>
+                        <User className="" />
                     </Button>
                 </div>
                 <div className=" h-full w-[67%] flex items-center">
