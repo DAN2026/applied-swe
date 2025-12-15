@@ -398,7 +398,7 @@ export async function GetAllUsers() {
 }
 
 
-export async function UpdateUserRole(userId: number,newRole: Role, charityId?: number) {
+export async function UpdateUserRole(userId: number, newRole: Role) {
   try {
     const user = await prisma.user.findUnique({ where: { User_ID: userId } });
     if (!user) return { success: false, error: "User not found." };
@@ -413,28 +413,8 @@ export async function UpdateUserRole(userId: number,newRole: Role, charityId?: n
       if (!admin) {
         await prisma.admin.create({ data: { User_ID: userId } });
       }
-      await prisma.staff.deleteMany({ where: { User_ID: userId } });
-    }
-
-    else if (newRole === "STAFF") {
-      if (!charityId) {
-        return { success: false, error: "Charity ID is required for STAFF role." };
-      }
-      const staff = await prisma.staff.findFirst({ where: { User_ID: userId } });
-      if (!staff) {
-        await prisma.staff.create({ data: { User_ID: userId, Charity_ID: charityId } });
-      } else {
-        await prisma.staff.update({
-          where: { Staff_ID: staff.Staff_ID },
-          data: { Charity_ID: charityId },
-        });
-      }
+    } else {
       await prisma.admin.deleteMany({ where: { User_ID: userId } });
-    }
-
-    else if (newRole === "USER") {
-      await prisma.admin.deleteMany({ where: { User_ID: userId } });
-      await prisma.staff.deleteMany({ where: { User_ID: userId } });
     }
 
     return { success: true };

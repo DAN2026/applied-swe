@@ -10,7 +10,7 @@ import { Role } from "@prisma/client";
 import AdminDashboard from "@/components/dashboards/AdminDashboard";
 import Topbar from "@/components/general/dashboard/Topbar";
 import Sidebar from "@/components/general/dashboard/Sidebar";
-import { GetTodaysDonationsWithGrowth,GetNewUsersWithGrowth,GetPendingDonationsWithGrowth,GetMonthlyUserCounts,GetDonationCountsByMonth,GetAllUsers  } from "@/lib/actions";
+import { GetTodaysDonationsWithGrowth, GetNewUsersWithGrowth, GetPendingDonationsWithGrowth, GetMonthlyUserCounts, GetDonationCountsByMonth, GetAllUsers } from "@/lib/actions";
 import Account from "@/components/dashboards/Account";
 
 export default function DashboardSwitcher() {
@@ -164,6 +164,9 @@ export default function DashboardSwitcher() {
           <TabsContent value="user">
             <UserDashboard session={session} />
           </TabsContent>
+          <TabsContent value="account">
+            <Account session={session} />
+          </TabsContent>
           {session.user.role === Role.STAFF || Role.ADMIN && (
             <TabsContent value="staff">
               <StaffDashboard session={session} />
@@ -190,6 +193,9 @@ export default function DashboardSwitcher() {
         <Tabs value={tab} onValueChange={setTab} >
           <TabsContent value="user">
             <UserDashboard session={session} />
+          </TabsContent>
+          <TabsContent value="account">
+            <Account session={session} />
           </TabsContent>
           {session.user.role === Role.STAFF || Role.ADMIN && (
             <TabsContent value="staff">
