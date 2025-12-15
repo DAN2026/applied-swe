@@ -23,14 +23,7 @@ export default function Topbar({ session, menuOpen, toggleMenu, tab }: NavbarPro
 
     const [inSession, setSessionState] = useState(false);
 
-    useEffect(() => {
-        setSessionState(session != null);
-    }, [session]);
-
-    const mobileDisplay = (
-        <nav>
-        </nav>
-    );
+    const [windowWidth, setWindowWidth] = useState(0);
 
     const tabTitle = {
         "user": "Dashboard / Personal",
@@ -40,17 +33,65 @@ export default function Topbar({ session, menuOpen, toggleMenu, tab }: NavbarPro
 
     const currentTitle = tab ? tabTitle[tab as keyof typeof tabTitle] : "Dashboard";
 
-    const desktopDisplay = (
-        <nav className="bg-white h-full flex flex-row justify-between">
+
+    useEffect(() => {
+        setSessionState(session != null);
+    }, [session]);
+
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        handleResize(); // initial value
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+
+
+
+    const mobileDisplay = windowWidth < 1000 ? (
+        <nav className="bg-white h-[100px] flex flex-row justify-between">
+            <div className="h-full w-[70%] flex">
+                <div className="h-full w-[7.5%] flex items-center justify-center ml-2 mr-4">
+                    <Button
+                        className={`rounded-[8] text-black bg-transparent  hover:bg-black/30 transition-all duration-300
+                        ${menuOpen ? "rotate-0" : "rotate-90"}`}
+                        onClick={() => toggleMenu(!menuOpen)}>
+                        <LucideMenu className="" />
+                    </Button>
+                </div>
+                <div className="h-full w-[60%] flex items-center">
+                    <h1 className="text-lg font-semibold">
+                        {currentTitle}
+                    </h1>
+                </div>
+            </div>
+            <div className="h-full w-[30%] flex">
+                <div className=" h-full w-[33%] flex items-center justify-center">
+                    <Button className={"text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
+                        <User className=""/>
+                    </Button>
+                </div>
+                <div className=" h-full w-[67%] flex items-center">
+                    <h1 className="truncate whitespace-nowrap overflow-hidden max-w-full mr-4">
+                        {session?.user.name}
+                    </h1>
+                </div>
+            </div>
+        </nav>
+    ) : null;
+
+
+
+
+    const desktopDisplay = windowWidth > 1000 ? (
+        <nav className="bg-white h-[100px] flex flex-row justify-between">
             <div className="h-full w-[100%] flex">
                 <div className="h-full w-[7.5%] flex items-center justify-center">
                     <Button
-                        className={
-                            `h-[50%] w-[40%] rounded-[8] text-black bg-transparent transition-transform duration-300
-                    hover:bg-black/30 transition-all duration-300
-                    ${menuOpen ? "rotate-0" : "rotate-90"}`}
+                        className={`rounded-[8] text-black bg-transparent  hover:bg-black/30 transition-all duration-300
+                        ${menuOpen ? "rotate-0" : "rotate-90"}`}
                         onClick={() => toggleMenu(!menuOpen)}>
-                        <LucideMenu className="!h-[25] !w-[25]" />
+                        <LucideMenu className="" />
                     </Button>
                 </div>
                 <div className="h-full w-[40%] flex items-center">
@@ -61,8 +102,8 @@ export default function Topbar({ session, menuOpen, toggleMenu, tab }: NavbarPro
             </div>
             <div className="h-full w-[20%] flex">
                 <div className=" h-full w-[33%] flex items-center justify-center">
-                    <Button className={"h-[40%] w-[40%] text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
-                        <User className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 xl:h-9 xl:w-9" />
+                    <Button className={"text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
+                        <User className=""/>
                     </Button>
                 </div>
                 <div className=" h-full w-[67%] flex items-center">
@@ -72,10 +113,11 @@ export default function Topbar({ session, menuOpen, toggleMenu, tab }: NavbarPro
                 </div>
             </div>
         </nav>
-    );
+    ) : null;
+
     return (
         <div>
-            {/* {mobileDisplay} */}
+            {mobileDisplay}
             {desktopDisplay}
         </div>
     )

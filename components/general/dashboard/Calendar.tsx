@@ -5,7 +5,7 @@ import { ChevronDownIcon } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { Popover,PopoverContent,PopoverTrigger } from "@/components/ui/popover"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 const months = [
   "January", "February", "March", "April",
@@ -14,12 +14,12 @@ const months = [
 ]
 
 type CalendarBProps = {
-  label?: string  
-  dateType? : string   
-  setSqlTimestamp?: (value: string) => void   
+  label?: string
+  dateType?: string
+  setSqlTimestamp?: (value: string) => void
 }
 
-function monthYearToSqlTimestamp(year: number, monthIndex: number,dateType:string): string {
+function monthYearToSqlTimestamp(year: number, monthIndex: number, dateType: string): string {
   const pad = (n: number, z = 2) => n.toString().padStart(z, "0")
 
   if (!dateType) return ""
@@ -37,12 +37,12 @@ function monthYearToSqlTimestamp(year: number, monthIndex: number,dateType:strin
   return ""
 }
 
-export function CalendarB({label,dateType,setSqlTimestamp}:CalendarBProps) {
+export function CalendarB({ label, dateType, setSqlTimestamp }: CalendarBProps) {
 
   const [open, setOpen] = useState(false)
 
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null)
-  
+
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
 
 
@@ -87,7 +87,7 @@ export function CalendarB({label,dateType,setSqlTimestamp}:CalendarBProps) {
                   setSelectedMonth(index)
                   setOpen(false)
 
-                  if(dateType){
+                  if (dateType) {
                     const timestamp = monthYearToSqlTimestamp(selectedYear, index, dateType);
                     setSqlTimestamp?.(timestamp);
                   }
@@ -95,10 +95,9 @@ export function CalendarB({label,dateType,setSqlTimestamp}:CalendarBProps) {
                 className={`
                   p-2 rounded-md text-sm
                   hover:bg-gray-200 transition
-                  ${
-                    selectedMonth === index
-                      ? "bg-black text-white"
-                      : "bg-gray-100"
+                  ${selectedMonth === index
+                    ? "bg-black text-white"
+                    : "bg-gray-100"
                   }
                 `}
               >

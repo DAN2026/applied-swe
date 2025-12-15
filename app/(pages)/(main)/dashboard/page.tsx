@@ -184,7 +184,7 @@ export default function DashboardSwitcher() {
       <div>
         <Sidebar session={session} tab={tab} setTab={setTab} menuOpen={menuOpen} toggleMenu={toggleMenu} ></Sidebar>
       </div>
-      <div className="grid grid-rows-[10%_90%]">
+      <div className="grid grid-rows-[auto_1fr]">
         <Topbar session={session} menuOpen={menuOpen} toggleMenu={toggleMenu} tab={tab}></Topbar>
         <Tabs value={tab} onValueChange={setTab} >
           <TabsContent value="user">
@@ -206,21 +206,22 @@ export default function DashboardSwitcher() {
   ) : null;
 
 
+
   return (
 
-  <div className="relative h-full w-full">
-    
-    {menuOpen && windowWidth < 1440 && (
-      <div
-        className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
-        onClick={() => toggleMenu(false)}
-      />
-    )}
+    <div className="relative h-full w-full">
 
-    {desktopDisplay}
-    {laptopDisplay}
+      {menuOpen && windowWidth < 1440 && (
+        <div
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+          onClick={() => toggleMenu(false)}
+        />
+      )}
 
-  </div>
+      {desktopDisplay}
+      {laptopDisplay}
+
+    </div>
 
   );
 }

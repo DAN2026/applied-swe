@@ -5,23 +5,17 @@ import { Gift, Users, Loader, Star, User2Icon } from "lucide-react"
 import Card from "../general/Card"
 import UserLineChart from "../general/graphs/UserLineChart"
 import CharityBarChart from "../general/graphs/CharityBarChart"
-import { Dropdown } from "../ui/dashboard/dropdown"
-import { CalendarB } from "../ui/dashboard/calendarB"
+import { CalendarB } from "../general/dashboard/Calendar"
 import { getDefaultStartEndDates } from "@/lib/utils"
 import DataTable from "../general/DataTable"
 import { ColumnDef } from "@tanstack/react-table";
 import { User } from "@prisma/client"
 import { Input } from "@/components/ui/input"
 import { Button } from "../ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-
 import { UpdateUserRole } from "@/lib/actions"; // your server action
 import { useTransition } from "react";
+import { DialogPromotion } from "../general/dashboard/DialogPromotion"
+
 
 //#region Types
 
@@ -61,8 +55,9 @@ interface AdminDashboardProps {
 
 //#endregion
 
-
 export default function AdminDashboard({ session, adminData }: AdminDashboardProps) {
+
+  //#region Constants
 
   const defaultDates = getDefaultStartEndDates();
 
@@ -75,6 +70,8 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
     { label: "Address", key: "Address" },
     { label: "Postcode", key: "Postcode" },
   ];
+
+  //#endregion
 
   //#region Use States
 
@@ -123,6 +120,7 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
     handleResize(); // initial value
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+
   }, []);
 
 
@@ -157,6 +155,17 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
       );
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const handleUserUpdate = (updatedUser: User) => {
+    setUsers((prev) =>
+      prev.map((u) => (u.User_ID === updatedUser.User_ID ? updatedUser : u))
+    );
+
+    // If the updated user is currently selected, update selectedUser too
+    if (selectedUser?.User_ID === updatedUser.User_ID) {
+      setSelectedUser(updatedUser);
     }
   };
 
@@ -201,26 +210,11 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
       accessorKey: "Role",
       header: "Role",
       enableSorting: true,
-      cell: ({ row }) => {
-        const role = row.getValue("Role") as "USER" | "STAFF" | "ADMIN";
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <span className="font-bold cursor-pointer">{role}</span>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              {["USER", "STAFF", "ADMIN"].map((r) => (
-                <DropdownMenuItem
-                  key={r}
-                  onClick={() => handleRoleChange(row.original.User_ID, r as any)}
-                >
-                  {r}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      }
+      cell: ({ row }) => (
+        <span className="font-semibold">
+          {row.getValue("Role")}
+        </span>
+      ),
     },
     {
       accessorKey: "Date_Joined",
@@ -478,7 +472,7 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
 
   //#region Desktop View
 
-  const desktopDisplay = windowWidth > 1440 ?(
+  const desktopDisplay = windowWidth >= 1440 ? (
     <div className="w-full">
       <div className="grid grid-rows-[min-content_min-content_1fr_1fr] h-screen">
         <div className="grid grid-cols-[25%_25%_25%_25%]">
@@ -539,6 +533,7 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
             <div className="ml-10">
               <div className="flex items-center mt-2 mb-2">
                 <Input placeholder="Search for a username..." value={query} onChange={(e) => setQuery(e.target.value)} className="max-w-sm" />
+                <DialogPromotion user={selectedUser} onUserUpdate={handleUserUpdate}></DialogPromotion>
               </div>
               <div className="flex-1 overflow-scroll mr-10">
                 <DataTable data={filteredUsers} columns={userColumns} rowClick={handleRowClick} selectedID={selectedID} getRowId={(row) => row.User_ID} />
@@ -616,8 +611,9 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
             <div className="ml-10">
               <div className="flex items-center mt-2 mb-2">
                 <Input placeholder="Search for a username..." value={query} onChange={(e) => setQuery(e.target.value)} className="max-w-sm" />
+                <DialogPromotion user={selectedUser} onUserUpdate={handleUserUpdate}></DialogPromotion>
               </div>
-              <div className="flex-1 overflow-scroll   mr-10">
+              <div className="flex-1 overflow-scroll mr-10">
                 <DataTable data={filteredUsers} columns={userColumns} rowClick={handleRowClick} selectedID={selectedID} getRowId={(row) => row.User_ID} />
               </div>
             </div>
@@ -629,13 +625,84 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
     </div>
   ) : null;
 
+  const ipadDisplay = windowWidth < 1024 ? (
+    <div className="w-[96vw] h-[2000px]">
+      <div className="flex flex-col h-full">
 
+        <div className="flex-[.25] p-2">
+          <div className="grid grid-cols-2 gap-2 h-full">
+            <Card
+              title="Today's Donations"
+              icon={Gift}
+              value={adminData?.donations?.today ?? null}
+              valueGrowth={adminData?.donations?.growth ?? undefined}
+            />
+            <Card
+              title="Today's Users"
+              icon={Users}
+              value={adminData?.users?.today ?? null}
+              valueGrowth={adminData?.users?.growth ?? undefined}
+            />
+            <Card
+              title="Pending Donos"
+              icon={Loader}
+              value={adminData?.pendingDonations?.today ?? null}
+              valueGrowth={adminData?.pendingDonations?.growth ?? undefined}
+            />
+            <Card
+              title="New Users"
+              icon={Star}
+              value={adminData?.users?.today ?? null}
+              valueGrowth={adminData?.users?.growth ?? undefined}
+            />
+          </div>
+        </div>
+
+        <div className="flex-[.5] p-4">
+          <h1 className="font-semibold text-lg mb-10 mt-10 ml-5">
+            User Overview
+          </h1>
+          <div className="h-full w-[90%] ">
+            <UserLineChart data={adminData?.userChartData?.data ?? []} />
+          </div>
+        </div>
+
+        <div className="flex-[.5] p-4">
+          <div className="flex justify-between items-center">
+            <h1 className="font-semibold text-lg mb-10 mt-10 ml-5">Charity Overview</h1>
+            <div className="flex">
+              <CalendarB label="Start Date" setSqlTimestamp={setSqlTimestampStart} dateType="Start Date" />
+              <CalendarB label="End Date" setSqlTimestamp={setSqlTimestampEnd} dateType="End Date" />
+            </div>
+          </div>
+          <div className="h-[90%] w-[95%] ">
+            <CharityBarChart startDate={startDate} endDate={endDate} data={adminData?.charityMonthlyCounts ?? []}></CharityBarChart>
+          </div>
+        </div>
+
+        <div className="flex-[0.5] p-2  overflow-hidden">
+          <div className="h-[10%] flex items-center">
+            <h1 className="font-semibold text-lg mb-10 mt-10 ml-5">User Table</h1>
+          </div>
+          <div className="h-[10%] ml-5 mr-15">
+            <Input placeholder="Search for a username..." value={query} onChange={(e) => setQuery(e.target.value)} className="w-[50%]" />
+            <DialogPromotion user={selectedUser} onUserUpdate={handleUserUpdate} ></DialogPromotion>
+          </div>
+          <div className="h-[80%] overflow-auto ml-5">
+            <DataTable data={filteredUsers} columns={userColumns} rowClick={handleRowClick} selectedID={selectedID} getRowId={(row) => row.User_ID} />
+          </div>
+        </div>
+
+      </div>
+    </div>
+  ) : null;
 
 
   return (
     <div>
       {desktopDisplay}
       {laptopDisplay}
+      {ipadDisplay}
     </div>
   )
 }

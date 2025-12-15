@@ -226,31 +226,3 @@ const mobileDisplay = windowWidth < 1440?(
       </div>
     )
 }
-
-// {generalNavLinks
-//         .filter(link => session?.user?.role && link.roles.includes(session.user.role))
-//         .map((link, index) => {
-//             const Icon = link.icon;
-//             return (
-//               <Button
-//                 key={index}
-//                 onClick={link.onClick}
-//                 className="w-full flex items-center justify-start  rounded-none text-white p-8  w-[90%] mt-1 rounded-[12] bg-transparent hover:bg-white/10"
-//               >
-//                 {Icon && <Icon className="mr-2 ml-3 " />}
-//                 <span>{link.label}</span>
-//               </Button>
-//             );
-//           })} 
-
-      //     <div className="relative h-full w-12 ml-5 "> 
-      //       <Image
-      //         src="/images/Logo.png"
-      //         alt="Logo"
-      //         fill
-      //         className="object-contain"
-      //         priority
-      //       />
-      //     </div>
-      //     <Link className="text-white w-full text- font-bold" href="/">Sustain Wear</Link>
-      // </div>
