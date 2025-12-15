@@ -11,7 +11,6 @@ import AdminDashboard from "@/components/dashboards/AdminDashboard";
 import Topbar from "@/components/general/dashboard/Topbar";
 import Sidebar from "@/components/general/dashboard/Sidebar";
 import { GetTodaysDonationsWithGrowth, GetNewUsersWithGrowth, GetPendingDonationsWithGrowth, GetMonthlyUserCounts, GetDonationCountsByMonth, GetAllUsers } from "@/lib/actions";
-import Account from "@/components/dashboards/Account";
 
 export default function DashboardSwitcher() {
 
@@ -159,13 +158,10 @@ export default function DashboardSwitcher() {
         <Sidebar session={session} tab={tab} setTab={setTab} menuOpen={menuOpen} toggleMenu={toggleMenu}></Sidebar>
       </div>
       <div className="grid grid-rows-[10%_90%]">
-        <Topbar session={session} menuOpen={menuOpen} toggleMenu={toggleMenu} tab={tab} setTab={setTab}></Topbar>
+        <Topbar session={session} menuOpen={menuOpen} toggleMenu={toggleMenu} tab={tab}></Topbar>
         <Tabs value={tab} onValueChange={setTab} >
           <TabsContent value="user">
             <UserDashboard session={session} />
-          </TabsContent>
-          <TabsContent value="account">
-            <Account session={session} />
           </TabsContent>
           {session.user.role === Role.STAFF || Role.ADMIN && (
             <TabsContent value="staff">
@@ -189,13 +185,10 @@ export default function DashboardSwitcher() {
         <Sidebar session={session} tab={tab} setTab={setTab} menuOpen={menuOpen} toggleMenu={toggleMenu} ></Sidebar>
       </div>
       <div className="grid grid-rows-[auto_1fr]">
-        <Topbar session={session} menuOpen={menuOpen} toggleMenu={toggleMenu} tab={tab} setTab={setTab}></Topbar>
+        <Topbar session={session} menuOpen={menuOpen} toggleMenu={toggleMenu} tab={tab}></Topbar>
         <Tabs value={tab} onValueChange={setTab} >
           <TabsContent value="user">
             <UserDashboard session={session} />
-          </TabsContent>
-          <TabsContent value="account">
-            <Account session={session} />
           </TabsContent>
           {session.user.role === Role.STAFF || Role.ADMIN && (
             <TabsContent value="staff">
