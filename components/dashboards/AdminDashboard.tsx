@@ -229,8 +229,6 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
 
   //#endregion
 
-  //#endregion
-
   //#region User Formatting Functions
 
   const formatValue = (key: string, value: any) => {
@@ -302,7 +300,7 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
         </div>
         <div className="">
           <div className="overflow-hidden">
-            <div className=" ml-10 flex items-center ">
+            <div className=" ml-10 flex items-center mt-10">
               <h1 className="font-semibold text-sm lg:text-base">User Table</h1>
             </div>
             <div className="ml-10">
@@ -314,8 +312,6 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
                 <DataTable data={filteredUsers} columns={userColumns} rowClick={handleRowClick} selectedID={selectedID} getRowId={(row) => row.User_ID} />
               </div>
             </div>
-          </div>
-          <div className="grid grid-rows-[10%_90%]">
           </div>
         </div>
       </div>
