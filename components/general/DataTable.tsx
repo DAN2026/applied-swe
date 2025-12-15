@@ -84,7 +84,7 @@ const DataTable = ({ rowClick, data, columns,selectedID,getRowId }: DataTablePro
           return (
             <TableRow
               key={row.id}
-              onDoubleClick={rowClick ? () => rowClick(row.original) : undefined}
+              onClick={rowClick ? () => rowClick(row.original) : undefined}
               className={`odd:bg-white even:bg-gray-50 ${
                 rowId.toString() === selectedID?.toString() ? "odd:bg-gradient-to-b from-emerald-600 to-emerald-900 even:bg-gradient-to-b from-emerald-600 to-emerald-900" : ""
               } hover:bg-emerald-100 cursor-pointer transition-all duration-300 `}
