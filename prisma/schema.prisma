@@ -17,6 +17,7 @@ model User {
   Postcode String
   Role     Role @default(USER)
   Date_Joined  DateTime    @default(now())
+  Last_Active DateTime @default(now())
   Staff    Staff[]
   Admin    Admin[]
   Items    Items[]

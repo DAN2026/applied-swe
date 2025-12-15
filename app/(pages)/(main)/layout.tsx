@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import Navbar from "@/components/general/LandingNavbar";
 
-
 export default async function RootLayout({
   children,
 }: Readonly<{

@@ -10,7 +10,8 @@ import { Role } from "@prisma/client";
 import AdminDashboard from "@/components/dashboards/AdminDashboard";
 import Topbar from "@/components/general/dashboard/Topbar";
 import Sidebar from "@/components/general/dashboard/Sidebar";
-import { GetTodaysDonationsWithGrowth, GetNewUsersWithGrowth, GetPendingDonationsWithGrowth, GetMonthlyUserCounts, GetDonationCountsByMonth, GetAllUsers } from "@/lib/actions";
+import { GetTodaysDonationsWithGrowth,GetNewUsersWithGrowth,GetPendingDonationsWithGrowth,GetMonthlyUserCounts,GetDonationCountsByMonth,GetAllUsers  } from "@/lib/actions";
+import Account from "@/components/dashboards/Account";
 
 export default function DashboardSwitcher() {
 

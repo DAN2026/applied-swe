@@ -7,6 +7,8 @@ import { ColumnDef } from "@tanstack/react-table"
 import DataTable from "../general/DataTable"
 import ButtonGroup from "../general/TimeGroup"
 import { Session } from "next-auth"
+import ViewDonation from "./modals/ViewDonation"
+import { approveDonation, sendForResubmit } from "@/app/(pages)/(main)/dashboard/actions"
 
 function useDonations(session: Session) {
   const [donations, setDonations] = useState<Items[]>([])
@@ -77,12 +79,13 @@ export default function UserDashboard({ session }: { session: Session }) {
 
   return (
     <div className="gap-6 px-6 h-[calc(100vh-80px)]">
+      {modal}
       <div className="flex flex-col overflow-hidden bg-white rounded-xl border shadow">
         <div className="flex justify-between items-center p-3 border-b bg-gray-50">
           <ButtonGroup value={timePeriod} onChange={setTimePeriod} />
         </div>
         <div className="flex-1 overflow-auto p-2">
-          <DataTable data={filteredDonations} columns={columns} />
+          <DataTable rowClick={(item:Items)=>setModal(<ViewDonation onClose={()=>setModal(null)} item={item} onApprove={approveDonation} onSendForReview={sendForResubmit}/>)} data={filteredDonations} columns={columns} />
         </div>
       </div>
     </div>

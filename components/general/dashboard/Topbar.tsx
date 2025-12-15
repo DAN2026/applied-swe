@@ -12,14 +12,15 @@ import { UserRound, Users, Clipboard, LogOut, Settings, User } from "lucide-reac
 
 
 interface NavbarProps {
-    session: Session | null;
-    menuOpen?: boolean;
-    toggleMenu: (value: boolean) => void;
-    tab?: string;
+  session: Session | null;
+  menuOpen?: boolean;
+  toggleMenu: (value: boolean) => void;
+  tab?:string ;
+  setTab: (tab:string) => void;
 }
 
 
-export default function Topbar({ session, menuOpen, toggleMenu, tab }: NavbarProps) {
+export default function Topbar({ setTab,session,menuOpen,toggleMenu,tab }: NavbarProps){
 
     const [inSession, setSessionState] = useState(false);
 
@@ -81,7 +82,12 @@ export default function Topbar({ session, menuOpen, toggleMenu, tab }: NavbarPro
     ) : null;
 
 
-
+    const tabTitle = {
+        "user" : "Dashboard / Personal",
+        "staff" : "Dashboard / Charities",
+        "admin" : "Dashboard / User Management",
+        "account": "Dashboard / Your Account"
+    }
 
     const desktopDisplay = windowWidth > 1000 ? (
         <nav className="bg-white h-[100px] flex flex-row justify-between">
@@ -102,7 +108,10 @@ export default function Topbar({ session, menuOpen, toggleMenu, tab }: NavbarPro
             </div>
             <div className="h-full w-[20%] flex">
                 <div className=" h-full w-[33%] flex items-center justify-center">
-                    <Button className={"text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
+                    <Button onClick={()=>{
+                    setTab("account")} 
+                    }
+                    className={"text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250""}>
                         <User className=""/>
                     </Button>
                 </div>

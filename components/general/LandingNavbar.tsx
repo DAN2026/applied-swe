@@ -26,8 +26,8 @@ export default function Navbar({ session }: NavbarProps){
 
   const navLinks = [
     { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
+    { href: "/#about", label: "About" },
+    { href: "/#contact", label: "Contact" },
   ];
 
   if (session) {
