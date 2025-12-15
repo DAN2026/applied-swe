@@ -29,7 +29,7 @@ type DataTableProps<T = any> = {
   getRowId?: (row: any) => string | number;
 }
 
-const DataTable = ({ rowClick, data, columns, selectedID, getRowId }: DataTableProps) => {
+const DataTable = ({ rowClick, data, columns,selectedID,getRowId }: DataTableProps) => {
   const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
@@ -45,7 +45,7 @@ const DataTable = ({ rowClick, data, columns, selectedID, getRowId }: DataTableP
   const minRows = 8
   const skeletonCount = Math.max(0, minRows - visibleRows.length)
   const totalColumns = table.getAllLeafColumns().length
-
+  
 
   return (
     <Table className="bg-gray-50 overflow-hidden rounded-2xl">
@@ -84,9 +84,10 @@ const DataTable = ({ rowClick, data, columns, selectedID, getRowId }: DataTableP
           return (
             <TableRow
               key={row.id}
-              onClick={rowClick ? () => rowClick(row.original) : undefined}
-              className={`odd:bg-white even:bg-gray-50 ${rowId.toString() === selectedID?.toString() ? "odd:bg-gradient-to-b from-emerald-600 to-emerald-900 even:bg-gradient-to-b from-emerald-600 to-emerald-900" : ""
-                } hover:bg-emerald-100 cursor-pointer transition-all duration-300 `}
+              onDoubleClick={rowClick ? () => rowClick(row.original) : undefined}
+              className={`odd:bg-white even:bg-gray-50 ${
+                rowId.toString() === selectedID?.toString() ? "odd:bg-gradient-to-b from-emerald-600 to-emerald-900 even:bg-gradient-to-b from-emerald-600 to-emerald-900" : ""
+              } hover:bg-emerald-100 cursor-pointer transition-all duration-300 `}
             >
               {row.getVisibleCells().map((cell) => (
                 <TableCell key={cell.id} className={`p-3 text-sm  ${rowId.toString() === selectedID?.toString() ? "text-white" : "text-gray-800"}`}>
@@ -98,7 +99,7 @@ const DataTable = ({ rowClick, data, columns, selectedID, getRowId }: DataTableP
         })}
         {/* NO DATA ROW */}
         {visibleRows.length === 0 && (
-
+          
           <TableRow>
             <TableCell
               colSpan={totalColumns}
