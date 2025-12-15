@@ -398,29 +398,45 @@ export async function GetAllUsers() {
 }
 
 
-export async function UpdateUserRole(userId: number, newRole: Role) {
+export async function UpdateUserRole(userId: number, newRole: Role, charityId?: number) {
   try {
     const user = await prisma.user.findUnique({ where: { User_ID: userId } });
     if (!user) return { success: false, error: "User not found." };
+
+    if (newRole === "ADMIN") {
+      const admin = await prisma.admin.findFirst({ where: { User_ID: userId } });
+      if (!admin) await prisma.admin.create({ data: { User_ID: userId } });
+      await prisma.staff.deleteMany({ where: { User_ID: userId } });
+    } 
+    else if (newRole === "STAFF") {
+      if (!charityId) {
+        return { success: false, error: "Charity ID is required for STAFF role." };
+      }
+      const staff = await prisma.staff.findFirst({ where: { User_ID: userId } });
+      if (!staff) {
+        await prisma.staff.create({ data: { User_ID: userId, Charity_ID: charityId } });
+      } else {
+        await prisma.staff.update({
+          where: { Staff_ID: staff.Staff_ID },
+          data: { Charity_ID: charityId },
+        });
+      }
+      await prisma.admin.deleteMany({ where: { User_ID: userId } });
+    } 
+    else if (newRole === "USER") {
+      await prisma.admin.deleteMany({ where: { User_ID: userId } });
+      await prisma.staff.deleteMany({ where: { User_ID: userId } });
+    }
 
     await prisma.user.update({
       where: { User_ID: userId },
       data: { Role: newRole },
     });
 
-    if (newRole === "ADMIN") {
-      const admin = await prisma.admin.findFirst({ where: { User_ID: userId } });
-      if (!admin) {
-        await prisma.admin.create({ data: { User_ID: userId } });
-      }
-    } else {
-      await prisma.admin.deleteMany({ where: { User_ID: userId } });
-    }
-
     return { success: true };
-  } catch (e: any) {
-    console.error("Error updating user role:", e);
-    return { success: false, error: e.message };
+  } catch (error: any) {
+    console.error("UpdateUserRole error:", error);
+    return { success: false, error: error.message || "Unknown error occurred." };
   }
 }
 

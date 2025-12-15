@@ -10,15 +10,16 @@ import { icons, LucideX } from "lucide-react";
 import { LucideMenu } from "lucide-react";
 import { UserRound, Users, Clipboard, LogOut,Settings } from "lucide-react"
 
-interface NavbarProps {
-  session: Session | null;
-  tab?: string;
-  setTab: (value: string) => void;
-  menuOpen?: boolean;
+interface SidebarProps {
+  session: Session;
+  tab: string;
+  setTab: React.Dispatch<React.SetStateAction<string>>;
+  menuOpen: boolean;
+  toggleMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 
-export default function Sidebar({ session, tab, setTab,menuOpen }: NavbarProps){
+export default function Sidebar({ session, tab, setTab,menuOpen }: SidebarProps){
 
   const [inSession, setSessionState] = useState(false);
 
