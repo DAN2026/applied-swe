@@ -24,6 +24,16 @@ export default function Topbar({ setTab,session,menuOpen,toggleMenu,tab }: Navba
 
     const [inSession, setSessionState] = useState(false);
 
+    const [windowWidth, setWindowWidth] = useState(0);
+
+    const tabTitle = {
+        "user" : "Dashboard / Personal",
+        "staff" : "Dashboard / Charities",
+        "admin" : "Dashboard / User Management",
+        "account": "Dashboard / Your Account"
+    }
+
+    const currentTitle = tab ? tabTitle[tab as keyof typeof tabTitle] : "Dashboard";
     useEffect(() => {
         setSessionState(session != null);
     }, [session]);
@@ -33,12 +43,7 @@ export default function Topbar({ setTab,session,menuOpen,toggleMenu,tab }: Navba
         </nav>
     ); 
 
-    const tabTitle = {
-        "user" : "Dashboard / Personal",
-        "staff" : "Dashboard / Charities",
-        "admin" : "Dashboard / User Management",
-        "account": "Dashboard / Your Account"
-    }
+
 
     const currentTitle = tab ? tabTitle[tab as keyof typeof tabTitle] : "Dashboard";
 
@@ -66,8 +71,8 @@ export default function Topbar({ setTab,session,menuOpen,toggleMenu,tab }: Navba
                     <Button onClick={()=>{
                     setTab("account")} 
                     }
-                    className={"h-[80%] w-[80%] text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
-                        <User className="!h-[2.5vh] !w-[2.5vw]"/>
+                    className={"text-black rounded-[4] bg-transparent hover:bg-black/30 transition-colors duration-250"}>
+                        <User className=""/>
                     </Button>
                 </div>
                 <div className=" h-full w-[67%] flex items-center">
