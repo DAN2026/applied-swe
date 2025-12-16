@@ -48,7 +48,7 @@ export default function CreateDonation({ onClose }: ModalProps) {
         </div>
 
         <div className="max-h-[70vh] overflow-y-auto px-6 py-4">
-          <Form fields={fields} action={handleDonation} successMsg="Donation created" />
+          <Form successFunc={onClose} fields={fields} action={handleDonation} successMsg="Donation created" />
         </div>
       </div>
     </div>
