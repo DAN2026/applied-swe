@@ -167,7 +167,7 @@ export default function DashboardSwitcher() {
           <TabsContent value="account">
             <Account session={session} />
           </TabsContent>
-          {session.user.role === Role.STAFF || Role.ADMIN && (
+          {(session.user.role === Role.STAFF || session.user.role === Role.ADMIN) && (
             <TabsContent value="staff">
               <StaffDashboard session={session} />
             </TabsContent>
@@ -197,7 +197,7 @@ export default function DashboardSwitcher() {
           <TabsContent value="account">
             <Account session={session} />
           </TabsContent>
-          {session.user.role === Role.STAFF || Role.ADMIN && (
+          {(session.user.role === Role.STAFF || session.user.role === Role.ADMIN) && (
             <TabsContent value="staff">
               <StaffDashboard session={session} />
             </TabsContent>
