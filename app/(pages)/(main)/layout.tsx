@@ -21,14 +21,6 @@ export default async function RootLayout({
   }
     
   return (
-    // <div className="grid grid-cols-[15%_85%] ">
-    //   <div>
-    //     <DashboardNavbar session={session}></DashboardNavbar>
-    //   </div>
-    //   <div>
-    //     {children}
-    //     </div>
-    // </div>
     <div>{children}</div>
   );
 }
