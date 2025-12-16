@@ -9,3 +9,12 @@ export type UserType = {
   postcode:string,
   role:Role
 }
+
+export type UserUpdateField = {
+    username:string,
+  email:string
+  phone?:string,
+  password:string,
+  address:string,
+  postcode:string,
+}

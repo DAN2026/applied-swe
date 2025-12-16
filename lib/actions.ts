@@ -1,13 +1,14 @@
 "use server"
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
-import { getServerSession, Session } from 'next-auth'
+import {z} from "zod"
+import {  Session } from 'next-auth'
 import prisma from "./prisma";
-import { UserType } from "@/types/user";
+import { UserType, UserUpdateField } from "@/types/user";
 import bcrypt from "bcryptjs";
 import { ItemType } from "@/types/item";
 import { DonationStatus } from "@prisma/client";
 import { Role } from "@prisma/client";
+import { UpdateUserSchema } from "@/schemas/updateUser";
 
 export async function CreateUser(user: UserType) {
   try {
@@ -44,6 +45,19 @@ export async function CreateUser(user: UserType) {
       };
     }
     return { success: false, errors: { general: { errors: [`An unknown error occurred. Please try again. ${e}`] } } };
+  }
+}
+
+export async function GetUser(session:Session){
+  if (!session?.user){
+    return null
+  }
+  try {
+    const user = await prisma.user.findFirst({where:{User_ID:session.user.id}})
+    return user
+  }
+  catch{
+    return null
   }
 }
 
@@ -398,7 +412,7 @@ export async function GetAllUsers() {
 }
 
 
-export async function UpdateUserRole(userId: number, newRole: Role) {
+export async function UpdateUserRole(userId: number,newRole: Role, charityId?: number) {
   try {
     const user = await prisma.user.findUnique({ where: { User_ID: userId } });
     if (!user) return { success: false, error: "User not found." };
@@ -413,8 +427,28 @@ export async function UpdateUserRole(userId: number, newRole: Role) {
       if (!admin) {
         await prisma.admin.create({ data: { User_ID: userId } });
       }
-    } else {
+      await prisma.staff.deleteMany({ where: { User_ID: userId } });
+    }
+
+    else if (newRole === "STAFF") {
+      if (!charityId) {
+        return { success: false, error: "Charity ID is required for STAFF role." };
+      }
+      const staff = await prisma.staff.findFirst({ where: { User_ID: userId } });
+      if (!staff) {
+        await prisma.staff.create({ data: { User_ID: userId, Charity_ID: charityId } });
+      } else {
+        await prisma.staff.update({
+          where: { Staff_ID: staff.Staff_ID },
+          data: { Charity_ID: charityId },
+        });
+      }
       await prisma.admin.deleteMany({ where: { User_ID: userId } });
+    }
+
+    else if (newRole === "USER") {
+      await prisma.admin.deleteMany({ where: { User_ID: userId } });
+      await prisma.staff.deleteMany({ where: { User_ID: userId } });
     }
 
     return { success: true };
@@ -423,6 +457,78 @@ export async function UpdateUserRole(userId: number, newRole: Role) {
     return { success: false, error: e.message };
   }
 }
+
+export async function UpdateUser(formData: FormData, session: Session) {
+  if (!session?.user) {
+    return {
+      success: false,
+      errors: { general: { errors: ["Not authenticated"] } },
+    };
+  }
+
+  const data = Object.fromEntries(formData.entries());
+  const result = UpdateUserSchema.safeParse(data);
+  if (!result.success) {
+    return {
+      success: false,
+      errors: z.treeifyError(result.error).properties,
+    };
+  }
+
+  const resData = result.data;
+
+  try {
+    await prisma.user.update({
+      where: { User_ID: session.user.id },
+      data: {
+        ...(resData.username && { Username: resData.username }),
+        ...(resData.email && { Email: resData.email }),
+        ...(resData.mobile && { Phone: resData.mobile }),
+        ...(resData.address && { Address: resData.address }),
+        ...(resData.postcode && { Postcode: resData.postcode }),
+        ...(resData.password && {
+          Password: await bcrypt.hash(resData.password, 10),
+        }),
+      },
+    });
+
+    return { success: true };
+  } catch (e: any) {
+    const fieldMap: Record<string, string> = {
+      Username: "username",
+      Email: "email",
+      Phone: "mobile",
+    };
+
+    if (e.code === "P2002") {
+      const field = e.meta?.target?.[0];
+      const fieldError =
+        fieldMap[field ?? ""] ?? field?.toLowerCase() ?? "unknown";
+
+      return {
+        success: false,
+        errors: {
+          [fieldError]: {
+            errors: [`That ${fieldError} is already in use.`],
+          },
+        },
+      };
+    }
+
+    return {
+      success: false,
+      errors: {
+        general: {
+          errors: [
+            "An unknown error occurred. Please try again.",
+            e instanceof Error ? e.message : String(e),
+          ],
+        },
+      },
+    };
+  }
+}
+
 
 
 
