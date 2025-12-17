@@ -12,7 +12,9 @@ export default function Register(){
 
     const reg = async (formData:FormData) =>{
       const result = await handleRegister(formData)
+      console.log("RESULT:"+result.success)
       if (!result.success){
+        console.log(result?.errors)
         return result;
       }
       const email = formData.get("email")

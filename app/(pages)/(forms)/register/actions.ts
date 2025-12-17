@@ -16,7 +16,6 @@ export async function handleRegister(formData: FormData) {
         return { success: false, errors:formattedErrors.properties }; //.properties contains <field:string, errors:string[]>
 
     }
-    console.log("REGISTRATION DATA",result.data)
 
         try
         {
@@ -29,10 +28,10 @@ export async function handleRegister(formData: FormData) {
                             postcode: data.postcode.toString(),
                             role: Role.USER
                         })
-                        if (create){
-                            return { success: true };
+                        if (!create.success){
+                            return create;
                         }
-                        else return {success: false, errors: {general:{errors: ["Could not create user"]}}}
+                        return {success: true}
         } 
         catch (e:any)
         {
@@ -43,7 +42,6 @@ export async function handleRegister(formData: FormData) {
             if (e.code === "P2002"){
                 const field = e.meta?.target?.[0];
                 const fieldError = fieldMap[field ?? ""] ?? field?.toLowerCase() ?? "unknown"; 
-                
                 return {
                     success: false, 
                     errors:{ 
