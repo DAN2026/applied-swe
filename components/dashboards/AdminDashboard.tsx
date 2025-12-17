@@ -433,7 +433,7 @@ export default function AdminDashboard({ session, adminData }: AdminDashboardPro
           <h1 className="font-semibold text-lg mb-10 mt-10 ml-5">
             User Overview
           </h1>
-          <div className="h-full w-[90%] ">
+          <div className="h-[90%] w-[90%] max-h-[300px]">
             <UserLineChart data={adminData?.userChartData?.data ?? []} />
           </div>
         </div>

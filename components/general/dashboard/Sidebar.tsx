@@ -88,8 +88,8 @@ const mobileDisplay = windowWidth < 1440?(
     ref={navRef} 
     className= 
     {menuOpen ? 
-    "fixed w-64 left-0 top-0 w-64 bg-gradient-to-b from-emerald-600 to-emerald-900 h-full transform transition-transform duration-300 translate-x-0 z-100"
-     : "fixed w-64 left-0 top-0 w-64 bg-gradient-to-b from-emerald-600 to-emerald-900 h-full transform transition-transform duration-300 -translate-x-full z-100"}>
+    "fixed w-64 left-0 top-0 w-64 bg-gradient-to-b from-emerald-600 to-emerald-900 h-full overflow-y-auto transform transition-transform duration-300 translate-x-0 z-100"
+     : "fixed w-64 left-0 top-0 w-64 bg-gradient-to-b from-emerald-600 to-emerald-900 h-full overflow-y-auto transform transition-transform duration-300 -translate-x-full z-100"}>
       <div className="h-full flex flex-col">
         <div className="h-auto flex flex-row items-center">
           <Link href="/" className="flex flex-row items-center gap-2 text-white font-bold mt-5 mb-10">
