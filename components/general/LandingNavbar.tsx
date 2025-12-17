@@ -26,8 +26,8 @@ export default function Navbar({ session }: NavbarProps){
 
   const navLinks = [
     { href: "/", label: "Home" },
-    { href: "/#about", label: "About" },
-    { href: "/#contact", label: "Contact" },
+    { href: "#about", label: "About" },
+    { href: "#contact", label: "Contact" },
   ];
 
   if (session) {
@@ -66,7 +66,7 @@ const mobileDisplay = (
           <Link className="text-white text-[clamp(1rem,2vw,1.1rem)] " href="/">Sustain Wear</Link>
         </div>
           <div className="h-full w-[10%] flex items-center justify-center">
-            <button className="text-white h-full w-full flex items-center justify-center transition-colors duration-200 hover:bg-black" onClick={toggleMenu}>{!menuOpen ? <LucideMenu/>: <LucideX/> }</button>
+            <button className="text-white h-full w-full flex items-center justify-center transition-colors duration-200 hover:bg-emerald-700" onClick={toggleMenu}>{!menuOpen ? <LucideMenu/>: <LucideX/> }</button>
           </div>
       </div>
       <div className= {menuOpen ? "bg-emerald-700/85 w-full py-4 p-0 translate-y-0 pb-0 pt-0" : "w-0 py-0 -translate-y-100"}>
@@ -78,7 +78,10 @@ const mobileDisplay = (
               > 
                 {link.label}
               </Link>
-            ))}      
+            ))} 
+            {session ==null  ? 
+          <Link className="h-full flex items-center text-white text-[clamp(1.2rem,2vw,1.4rem)] px-6 pt-6 pb-6 transition-colors duration-200 hover:bg-[#123715]/15" href="/login">Login</Link>
+          : <Link onClick={() => signOut()} className="h-full flex items-center text-white text-[clamp(1.2rem,2vw,1.4rem)] px-6 pt-6 pb-6 transition-colors duration-200 hover:bg-[#123715]/15" href="/login">Logout</Link>}
             <div></div>  
       </div>
   </nav>
