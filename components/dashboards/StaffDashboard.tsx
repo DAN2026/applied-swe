@@ -31,13 +31,17 @@ export default function UserDashboard({session}:{session:Session}) {
     const now = new Date()
     return donations.filter(donation => {
       const d1 = new Date(donation.Date_Added)
+      const d2 = new Date(now)
       switch (timePeriod) {
         case "3 Months":
-          return d1 > new Date(now.setMonth(now.getMonth() - 3))
+          d2.setMonth(now.getMonth() -3)
+          return d1 > d2
         case "6 Months":
-          return d1 > new Date(now.setMonth(now.getMonth() - 6))
+          d2.setMonth(now.getMonth() -6)
+          return d1 > d2        
         case "1 Year":
-          return d1 > new Date(now.setMonth(now.getMonth() - 12))
+          d2.setMonth(now.getMonth() -12)
+          return d1 > d2
         default:
           return true
       }
