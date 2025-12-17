@@ -6,4 +6,12 @@ This is our project setup guide:
 - npm install
 - npm run dev             (This enters dev mode)
 
+- Base Accounts (Please use these for testing)
+
+Email             Password   (credentials  needed to login)
+
+donor@sustain.com Test.Password123
+staff@sustain.com Test.Password123
+admin@sustain.com Test.Password123
+
 
