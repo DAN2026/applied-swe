@@ -6,9 +6,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
+import { useState } from "react";
 
 export default function Register(){
 
+  const [loading, setLoading] = useState<boolean>(true);
   const cred = (formData:FormData) => {
     const email = formData.get("email");
     const password = formData.get("password");
@@ -45,6 +47,7 @@ const mobileDisplay = (
       alt="Image of donated clothes"
       className="object-cover"
       priority
+      onLoadingComplete={()=>setLoading(false)}
     />
     <div className="absolute inset-0 bg-black/40" />
   </div>
@@ -66,7 +69,7 @@ const mobileDisplay = (
   </div>
 
   <div className="flex flex-col flex-1 justify-center px-6 pt-6 pb-10">
-            <Form fields={fields} action={(formData:FormData)=>{cred(formData)}} successMsg="Successfully logged in" redirect="dashboard"/>
+            <Form fields={fields} action={async (formData:FormData)=>{return cred(formData)}} successMsg="Successfully logged in" redirect="dashboard"/>
     <Button onClick={() => signIn("google", { callbackUrl: "/dashboard" })} className="flex items-center gap-2 p-5 m-4 rounded-md text-gray-700 bg-gray-100 hover:bg-gray-600 hover:text-white">
               <Image
                 src="/images/google.png"
@@ -102,6 +105,7 @@ const mobileDisplay = (
           <Image
             src="/images/clothes.jpg"
             fill
+            priority
             alt="image of donated clothes"
             className="object-cover min-h-screen"
           />
@@ -128,7 +132,7 @@ const mobileDisplay = (
             Login
           </h2>
           <div className="p-6 flex flex-col justify-center">
-            <Form fields={fields} action={(formData:FormData)=>{cred(formData)}} successMsg="Successfully logged in" redirect="dashboard"/>
+            <Form fields={fields} action={async (formData:FormData)=>{return cred(formData)}} successMsg="Successfully logged in" redirect="dashboard"/>
             <Button onClick={() => signIn("google", { callbackUrl: "/dashboard" })} className="flex items-center gap-2 p-5 m-4 rounded-md text-gray-700 bg-gray-100 hover:bg-gray-600 hover:text-white">
               <Image
                 src="/images/google.png"

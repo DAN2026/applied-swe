@@ -16,7 +16,7 @@ type FormProps = {
     formData: FormData
   ) => Promise<{
     success: boolean;
-    errors?: Record<string, { errors: string[] }>;
+    errors?: Record<string, { errors: string[] }> | void | undefined;
   }>;
   successMsg: string
   successFunc?: () => void;
