@@ -11,7 +11,7 @@ This is our project setup guide:
 
 - Base Accounts (Please use these for testing)
 
-
+donor@sustain.com Test.Password123
 staff@sustain.com Test.Password123
 admin@sustain.com Test.Password123
 
